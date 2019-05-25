@@ -1,5 +1,6 @@
 {
   "name": "skyline/render",
+  "description": "The Skyline Render package is responsible to transform the results from action controllers into valid http responses.",
   "license": "MIT",
   "minimum-stability": "dev",
   "authors": [
