@@ -37,15 +37,41 @@ namespace Skyline\Render;
 
 use Skyline\Render\Info\RenderInfoInterface;
 
-interface RenderInterface
+abstract class AbstractConfiguredRender extends AbstractRender
 {
-    const SKYLINE_DEFAULT_RENDER = 'default-render';
+    private $configuration;
 
     /**
-     * Render the information into a response
+     * ConfiguredRender constructor.
+     * @param $configuration
+     */
+    public function __construct($configuration)
+    {
+        $this->configuration = $configuration;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getConfiguration()
+    {
+        return $this->configuration;
+    }
+
+    /**
+     * Setup the render before start rendering
      *
-     * @param RenderInfoInterface $renderInfo
+     * @param $configuration
      * @return void
      */
-    public function render(RenderInfoInterface $renderInfo);
+    abstract protected function setup($configuration);
+
+    /**
+     * @inheritDoc
+     */
+    public function render(RenderInfoInterface $renderInfo)
+    {
+        $this->setup( $this->getConfiguration() );
+        parent::render($renderInfo);
+    }
 }

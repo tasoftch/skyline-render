@@ -35,17 +35,67 @@
 namespace Skyline\Render;
 
 
+use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Info\RenderInfoInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use TASoft\EventManager\EventManagerTrait;
 
-interface RenderInterface
+abstract class AbstractRender implements RenderInterface
 {
-    const SKYLINE_DEFAULT_RENDER = 'default-render';
+    use EventManagerTrait;
+
+    const EVENT_PRE_RENDER = 'pre-render';
+    const EVENT_POST_RENDER = 'post-render';
+    const EVENT_MAIN_RENDER = 'main-render';
+
+    /** @var Request */
+    private $request;
+    /** @var Response|null */
+    private $response;
 
     /**
-     * Render the information into a response
-     *
-     * @param RenderInfoInterface $renderInfo
-     * @return void
+     * @return Request
      */
-    public function render(RenderInfoInterface $renderInfo);
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    /**
+     * @param Request $request
+     */
+    public function setRequest(Request $request): void
+    {
+        $this->request = $request;
+    }
+
+    /**
+     * @return Response|null
+     */
+    public function getResponse(): ?Response
+    {
+        return $this->response;
+    }
+
+    /**
+     * @param Response|null $response
+     */
+    public function setResponse(?Response $response): void
+    {
+        $this->response = $response;
+    }
+
+
+    public function render(RenderInfoInterface $renderInfo)
+    {
+        $event = new InternRenderEvent($this->getRequest(), $this, $renderInfo);
+        $event->setResponse($this->getResponse());
+
+        $this->trigger(static::EVENT_PRE_RENDER, $event);
+        $this->trigger(static::EVENT_MAIN_RENDER, $event);
+        $this->trigger(static::EVENT_POST_RENDER, $event);
+
+        $this->setResponse( $event->getResponse() );
+    }
 }

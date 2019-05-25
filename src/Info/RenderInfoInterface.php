@@ -32,20 +32,21 @@
  *
  */
 
-namespace Skyline\Render;
+namespace Skyline\Render\Info;
 
 
-use Skyline\Render\Info\RenderInfoInterface;
-
-interface RenderInterface
+interface RenderInfoInterface
 {
-    const SKYLINE_DEFAULT_RENDER = 'default-render';
+    const INFO_RESPONSE = 'response';
+    const INFO_MODEL = 'model';
+    const INFO_TEMPLATE = 'template';
+    const INFO_TEMPLATES = "templates";
 
     /**
-     * Render the information into a response
+     * Returns a value for the required information
      *
-     * @param RenderInfoInterface $renderInfo
-     * @return void
+     * @param string $infoName
+     * @return mixed|null
      */
-    public function render(RenderInfoInterface $renderInfo);
+    public function get(string $infoName);
 }

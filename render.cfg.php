@@ -32,20 +32,13 @@
  *
  */
 
-namespace Skyline\Render;
+use Skyline\Render\Compiler\RenderCompiler;
+use Skyline\Render\RenderInterface;
 
+return [
+    RenderInterface::SKYLINE_DEFAULT_RENDER => [
+        RenderCompiler::PLUGINS => [
 
-use Skyline\Render\Info\RenderInfoInterface;
-
-interface RenderInterface
-{
-    const SKYLINE_DEFAULT_RENDER = 'default-render';
-
-    /**
-     * Render the information into a response
-     *
-     * @param RenderInfoInterface $renderInfo
-     * @return void
-     */
-    public function render(RenderInfoInterface $renderInfo);
-}
+        ]
+    ]
+];

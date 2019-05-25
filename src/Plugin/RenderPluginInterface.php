@@ -34,14 +34,13 @@
 
 namespace Skyline\Render\Plugin;
 
-
-use Skyline\Render\RenderContextInterface;
+use TASoft\EventManager\EventManagerInterface;
 
 interface RenderPluginInterface
 {
     /**
-     * @param RenderContextInterface $context
+     * @param EventManagerInterface $eventManager
      * @return void
      */
-    public function initialize(RenderContextInterface $context);
+    public function initialize(EventManagerInterface $eventManager);
 }

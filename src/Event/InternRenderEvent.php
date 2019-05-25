@@ -32,20 +32,76 @@
  *
  */
 
-namespace Skyline\Render;
+namespace Skyline\Render\Event;
 
 
 use Skyline\Render\Info\RenderInfoInterface;
+use Skyline\Render\RenderInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use TASoft\EventManager\Event\Event;
 
-interface RenderInterface
+class InternRenderEvent extends Event
 {
-    const SKYLINE_DEFAULT_RENDER = 'default-render';
+    /** @var Request */
+    private $request;
+    /** @var RenderInterface */
+    private $render;
+    /** @var RenderInfoInterface */
+    private $info;
+    /** @var Response|null */
+    private $response;
 
     /**
-     * Render the information into a response
-     *
-     * @param RenderInfoInterface $renderInfo
-     * @return void
+     * InternRenderEvent constructor.
+     * @param Request $request
+     * @param RenderInterface $render
+     * @param RenderInfoInterface $info
      */
-    public function render(RenderInfoInterface $renderInfo);
+    public function __construct(Request $request, RenderInterface $render, RenderInfoInterface $info)
+    {
+        $this->request = $request;
+        $this->render = $render;
+        $this->info = $info;
+    }
+
+    /**
+     * @return Response|null
+     */
+    public function getResponse(): ?Response
+    {
+        return $this->response;
+    }
+
+    /**
+     * @param Response|null $response
+     */
+    public function setResponse(?Response $response): void
+    {
+        $this->response = $response;
+    }
+
+    /**
+     * @return Request
+     */
+    public function getRequest(): Request
+    {
+        return $this->request;
+    }
+
+    /**
+     * @return RenderInfoInterface
+     */
+    public function getInfo(): RenderInfoInterface
+    {
+        return $this->info;
+    }
+
+    /**
+     * @return RenderInterface
+     */
+    public function getRender(): RenderInterface
+    {
+        return $this->render;
+    }
 }

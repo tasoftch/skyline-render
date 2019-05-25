@@ -32,32 +32,10 @@
  *
  */
 
-namespace Skyline\Render;
+namespace Skyline\Render\Compiler;
 
 
-use Skyline\Render\Plugin\RenderPluginInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
-interface RenderContextInterface
+class RenderCompiler
 {
-    /**
-     * The context must know about the request.
-     *
-     * @return Request
-     */
-    public function getRequest(): Request;
-
-    /**
-     * Get the rendered response
-     *
-     * @return Response|null
-     */
-    public function getResponse(): ?Response;
-
-    /**
-     * @param RenderPluginInterface $plugin
-     * @return void
-     */
-    public function addPlugin(RenderPluginInterface $plugin);
+    const PLUGINS = 'plugins';
 }

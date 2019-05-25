@@ -32,20 +32,18 @@
  *
  */
 
-namespace Skyline\Render;
+use Skyline\Compiler\Factory\AbstractExtendedCompilerFactory;
+use Skyline\Compiler\Predef\ConfigurationCompiler;
+use Skyline\Compiler\Predef\OrderedConfigurationCompiler;
 
-
-use Skyline\Render\Info\RenderInfoInterface;
-
-interface RenderInterface
-{
-    const SKYLINE_DEFAULT_RENDER = 'default-render';
-
-    /**
-     * Render the information into a response
-     *
-     * @param RenderInfoInterface $renderInfo
-     * @return void
-     */
-    public function render(RenderInfoInterface $renderInfo);
-}
+return [
+    'routing-config' => [
+        AbstractExtendedCompilerFactory::COMPILER_CLASS_KEY                            => OrderedConfigurationCompiler::class,
+        ConfigurationCompiler::INFO_TARGET_FILENAME_KEY     => 'render.config.php',
+        ConfigurationCompiler::INFO_PATTERN_KEY             => '/^render\.cfg\.php$/i',
+        ConfigurationCompiler::INFO_CUSTOM_FILENAME_KEY     => 'render.config.php',
+        AbstractExtendedCompilerFactory::COMPILER_DEPENDENCIES_KEY => [
+            'composer-packages-order'
+        ]
+    ]
+];
