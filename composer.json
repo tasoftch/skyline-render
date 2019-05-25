@@ -1,0 +1,21 @@
+{
+  "name": "skyline/render",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Thomas Abplanalp",
+      "email": "info@tasoft.ch"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Skyline\\Render\\" : "src"
+    }
+  },
+  "require" : {
+    "php": "^7.2"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^6"
+  }
+}
