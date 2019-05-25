@@ -32,10 +32,35 @@
  *
  */
 
-namespace Skyline\Render\Compiler;
+namespace Skyline\Render\Exception;
 
 
-class RenderCompiler
+use Skyline\Render\RenderInterface;
+use Throwable;
+
+class RenderException extends \RuntimeException
 {
-    const PLUGINS = 'plugins';
+    /** @var RenderInterface */
+    private $render;
+
+    public function __construct($message = "", $code = 0, Throwable $previous = NULL, ...$args)
+    {
+        parent::__construct(vsprintf($message, $args), $code, $previous);
+    }
+
+    /**
+     * @return RenderInterface
+     */
+    public function getRender(): ?RenderInterface
+    {
+        return $this->render;
+    }
+
+    /**
+     * @param RenderInterface $render
+     */
+    public function setRender(RenderInterface $render): void
+    {
+        $this->render = $render;
+    }
 }

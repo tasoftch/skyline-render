@@ -39,9 +39,10 @@ use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Info\RenderInfoInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use TASoft\EventManager\EventManagerInterface;
 use TASoft\EventManager\EventManagerTrait;
 
-abstract class AbstractRender implements RenderInterface
+abstract class AbstractRender implements RenderInterface, EventManagerInterface
 {
     use EventManagerTrait;
 

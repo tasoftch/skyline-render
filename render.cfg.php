@@ -32,12 +32,12 @@
  *
  */
 
-use Skyline\Render\Compiler\RenderCompiler;
+use Skyline\Render\CompiledRender;
 use Skyline\Render\RenderInterface;
 
 return [
     RenderInterface::SKYLINE_DEFAULT_RENDER => [
-        RenderCompiler::PLUGINS => [
+        CompiledRender::CONFIG_PLUGINS => [
 
         ]
     ]
