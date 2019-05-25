@@ -32,16 +32,45 @@
  *
  */
 
-use Skyline\Render\CompiledRender;
-use Skyline\Render\Plugin\NullPlugin;
-use Skyline\Render\RenderInterface;
+namespace Skyline\Render\Template;
 
-return [
-    RenderInterface::SKYLINE_DEFAULT_RENDER => [
-        CompiledRender::CONFIG_PLUGINS => [
-            [
-                CompiledRender::CONFIG_PLUGIN_CLASS => NullPlugin::class
-            ]
-        ]
-    ]
-];
+
+class CallbackTemplate extends AbstractTemplate
+{
+    /** @var callable */
+    private $callback;
+
+    /**
+     * CallbackTemplate constructor.
+     * @param callable $callback
+     */
+    public function __construct(callable $callback)
+    {
+        $this->callback = $callback;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getRenderable(): callable
+    {
+        return $this->getCallback();
+    }
+
+
+    /**
+     * @return callable
+     */
+    public function getCallback(): callable
+    {
+        return $this->callback;
+    }
+
+    /**
+     * @param callable $callback
+     */
+    public function setCallback(callable $callback): void
+    {
+        $this->callback = $callback;
+    }
+}

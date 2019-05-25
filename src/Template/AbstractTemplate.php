@@ -32,16 +32,74 @@
  *
  */
 
-use Skyline\Render\CompiledRender;
-use Skyline\Render\Plugin\NullPlugin;
-use Skyline\Render\RenderInterface;
+namespace Skyline\Render\Template;
 
-return [
-    RenderInterface::SKYLINE_DEFAULT_RENDER => [
-        CompiledRender::CONFIG_PLUGINS => [
-            [
-                CompiledRender::CONFIG_PLUGIN_CLASS => NullPlugin::class
-            ]
-        ]
-    ]
-];
+
+abstract class AbstractTemplate implements TemplateInterface, \Serializable
+{
+    private $id;
+    /** @var string */
+    private $name;
+    /** @var string|null */
+    private $catalogName;
+    /** @var array */
+    private $tags = [];
+    /** @var array  */
+    private $attributes = [];
+
+
+    /**
+     * @inheritDoc
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getCatalogName(): ?string
+    {
+        return $this->catalogName;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTags(): array {
+        return $this->tags;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getAttribute(string $name)
+    {
+        return $this->attributes[$name] ?? NULL;
+    }
+
+    public function serialize()
+    {
+        // Can not serialize
+    }
+
+    public function unserialize($serialized)
+    {
+        list(
+            $this->name,
+            $this->catalogName,
+            $this->tags,
+            $this->id,
+            $this->attributes
+            ) = unserialize($serialized);
+    }
+}

@@ -32,16 +32,50 @@
  *
  */
 
-use Skyline\Render\CompiledRender;
-use Skyline\Render\Plugin\NullPlugin;
-use Skyline\Render\RenderInterface;
+namespace Skyline\Render\Template;
 
-return [
-    RenderInterface::SKYLINE_DEFAULT_RENDER => [
-        CompiledRender::CONFIG_PLUGINS => [
-            [
-                CompiledRender::CONFIG_PLUGIN_CLASS => NullPlugin::class
-            ]
-        ]
-    ]
-];
+
+interface TemplateInterface
+{
+    /**
+     * Returns an unique identification for this template
+     *
+     * @return string|int
+     */
+    public function getID();
+
+    /**
+     * Identifies a template by name. Multiple names may occur in application.
+     * @return string
+     */
+    public function getName(): string;
+
+    /**
+     * Kind of namespace of the template.
+     * @return null|string
+     */
+    public function getCatalogName(): ?string;
+
+    /**
+     * Get a bunch of tags to find template
+     *
+     * @return array
+     */
+    public function getTags(): array;
+
+    /**
+     * Gets a template attribute
+     *
+     * @param string $name
+     * @return mixed
+     */
+    public function getAttribute(string $name);
+
+    /**
+     * The render will get the template closure and injects the required arguments.
+     * After that, every output is buffered and will be the response's content.
+     *
+     * @return callable
+     */
+    public function getRenderable(): callable ;
+}

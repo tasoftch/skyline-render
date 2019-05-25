@@ -32,16 +32,48 @@
  *
  */
 
-use Skyline\Render\CompiledRender;
-use Skyline\Render\Plugin\NullPlugin;
-use Skyline\Render\RenderInterface;
+/**
+ * TemplateSerializableTest.php
+ * skyline-render
+ *
+ * Created on 2019-05-25 15:43 by thomas
+ */
 
-return [
-    RenderInterface::SKYLINE_DEFAULT_RENDER => [
-        CompiledRender::CONFIG_PLUGINS => [
-            [
-                CompiledRender::CONFIG_PLUGIN_CLASS => NullPlugin::class
-            ]
-        ]
-    ]
-];
+use PHPUnit\Framework\TestCase;
+use Skyline\Render\Compiler\Template\MutableTemplate;
+use Skyline\Render\Template\AbstractTemplate;
+
+class TemplateSerializableTest extends TestCase
+{
+    public function testGeneralTemplate() {
+        $mt = new MutableTemplate(TestTemplate::class, "myID");
+        $mt->addTag("Thomas");
+        $mt->addTag("Hehe");
+        $mt->setName("MyName");
+        $mt->setAttribute("SOME_ATTR", 54);
+        $mt->setAttribute("SOME_ARRAY", 22, true);
+        $mt->setAttribute("SOME_ARRAY", 23, true);
+        $mt->setAttribute("SOME_ARRAY", 24, true);
+        $mt->setCatalogName("Catalog");
+
+        $data = $mt->getSerializedTemplate();
+
+        /** @var TestTemplate $template */
+        $template = unserialize($data);
+
+        $this->assertInstanceOf(TestTemplate::class, $template);
+        $this->assertEquals(["Thomas", "Hehe"], $template->getTags());
+        $this->assertEquals("MyName", $template->getName());
+        $this->assertEquals(54, $template->getAttribute("SOME_ATTR"));
+        $this->assertEquals([22,23,24], $template->getAttribute("SOME_ARRAY"));
+        $this->assertEquals("Catalog", $template->getCatalogName());
+    }
+}
+
+class TestTemplate extends AbstractTemplate {
+    public function getRenderable(): callable
+    {
+        return function () {
+        };
+    }
+}
