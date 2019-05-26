@@ -81,4 +81,11 @@ class CaptureErrorsPlugin implements RenderPluginInterface
             restore_error_handler();
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function tearDown()
+    {
+    }
 }

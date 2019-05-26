@@ -64,6 +64,11 @@ class CompiledRender extends AbstractConfiguredRender
         $this->serviceManager = $serviceManager;
     }
 
+    protected function tearDown()
+    {
+    }
+
+
     protected function setup($configuration)
     {
         if($plugins = $configuration[ static::CONFIG_PLUGINS ] ?? NULL) {

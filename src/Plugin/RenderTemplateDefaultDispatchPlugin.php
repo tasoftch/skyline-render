@@ -45,6 +45,12 @@ use TASoft\EventManager\EventManagerInterface;
 
 class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
 {
+    /**
+     * @inheritDoc
+     */
+    public function tearDown()
+    {
+    }
 
     public function initialize(EventManagerInterface $eventManager)
     {

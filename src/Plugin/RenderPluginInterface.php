@@ -43,4 +43,11 @@ interface RenderPluginInterface
      * @return void
      */
     public function initialize(EventManagerInterface $eventManager);
+
+    /**
+     * Called after render to tear down session
+     *
+     * @return void
+     */
+    public function tearDown();
 }

@@ -60,4 +60,11 @@ class CaptureContentsPlugin implements RenderPluginInterface
             }
         }
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function tearDown()
+    {
+    }
 }

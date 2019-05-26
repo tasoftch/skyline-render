@@ -39,7 +39,16 @@ use TASoft\EventManager\EventManagerInterface;
 
 class NullPlugin implements RenderPluginInterface
 {
+    /**
+     * @inheritDoc
+     */
     public function initialize(EventManagerInterface $eventManager)
+    {
+    }
+    /**
+     * @inheritDoc
+     */
+    public function tearDown()
     {
     }
 }

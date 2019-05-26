@@ -45,6 +45,13 @@ use TASoft\EventManager\EventManagerInterface;
  */
 class RenderTemplateDispatchPlugin implements RenderPluginInterface
 {
+    /**
+     * @inheritDoc
+     */
+    public function tearDown()
+    {
+    }
+
     const EVENT_HEADER_RENDER = 'plugin.header';
     const EVENT_BODY_RENDER = 'plugin.body';
     const EVENT_FOOTER_RENDER = 'plugin.footer';
