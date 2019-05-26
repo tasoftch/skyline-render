@@ -38,14 +38,20 @@ namespace Skyline\Render;
 use Closure;
 use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Info\RenderInfoInterface;
+use Skyline\Render\Template\TemplateInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use TASoft\DI\DependencyManager;
+use TASoft\DI\Injector\ObjectListInjector;
 use TASoft\EventManager\EventManagerInterface;
 use TASoft\EventManager\EventManagerTrait;
+use TASoft\Service\ServiceForwarderTrait;
 
 abstract class AbstractRender implements RenderInterface, EventManagerInterface
 {
     use EventManagerTrait;
+    use ServiceForwarderTrait;
+
 
     const EVENT_PRE_RENDER = 'pre-render';
     const EVENT_POST_RENDER = 'post-render';
@@ -127,5 +133,29 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
         if($renderable instanceof Closure)
             $renderable = $renderable->bindTo($this, static::class);
         return $renderable;
+    }
+
+    /**
+     * This method should render a template without care about extensions and nestings.
+     *
+     * @param TemplateInterface $template
+     * @param RenderInfoInterface $renderInfo
+     */
+    public function renderTemplate(TemplateInterface $template, RenderInfoInterface $renderInfo) {
+        if($template instanceof TemplateInterface) {
+            $sm = $this->getServiceManager();
+            /** @var DependencyManager $dm */
+            $dm = $sm->get("dependencyManager");
+
+            $cb = $this->modifyRenderable( $template->getRenderable() );
+
+            $dm->pushGroup(function() use ($renderInfo, $cb, $dm, $template) {
+                $dm->addDependencyInjector(new ObjectListInjector([
+                    'renderInfo' => $renderInfo,
+                    "template" => $template
+                ]));
+                $dm->call($cb);
+            });
+        }
     }
 }

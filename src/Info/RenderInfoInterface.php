@@ -40,7 +40,6 @@ interface RenderInfoInterface
     const INFO_RESPONSE = 'response';
     const INFO_MODEL = 'model';
     const INFO_TEMPLATE = 'template';
-    const INFO_TEMPLATES = "templates";
 
     /**
      * Returns a value for the required information

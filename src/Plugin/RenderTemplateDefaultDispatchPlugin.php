@@ -38,6 +38,7 @@ namespace Skyline\Render\Plugin;
 use Skyline\Render\AbstractRender;
 use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Info\RenderInfoInterface;
+use Skyline\Render\Template\ExtendableTemplateInterface;
 use Skyline\Render\Template\TemplateInterface;
 use TASoft\DI\DependencyManager;
 use TASoft\DI\Injector\ObjectListInjector;
@@ -46,7 +47,6 @@ use TASoft\Service\ServiceForwarderTrait;
 
 class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
 {
-    use ServiceForwarderTrait;
 
     public function initialize(EventManagerInterface $eventManager)
     {
@@ -59,8 +59,11 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
         $template = $event->getInfo()->get( RenderInfoInterface::INFO_TEMPLATE );
 
         if($eventName == static::EVENT_HEADER_RENDER) {
-            // Capture header event to get extensions (if available first)
+            // Capture header event to get extensions (if available) that need to be rendered in header phase
 
+            if($template instanceof ExtendableTemplateInterface) {
+
+            }
         } elseif($eventName == static::EVENT_BODY_RENDER) {
             $this->renderTemplate($eventManager, $template, $event->getInfo());
         } elseif($eventName == static::EVENT_FOOTER_RENDER) {
@@ -70,21 +73,12 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
     }
 
 
-    protected function renderTemplate(AbstractRender $render, TemplateInterface $template, RenderInfoInterface $renderInfo) {
-        if($template instanceof TemplateInterface) {
-            $sm = $this->getServiceManager();
-            /** @var DependencyManager $dm */
-            $dm = $sm->get("dependencyManager");
+    /**
+     * Renders the main template that needs to be renderes by original event.
+     *
+     * @param AbstractRender $render
+     * @param TemplateInterface $template
+     * @param RenderInfoInterface $renderInfo
+     */
 
-            $cb = $render->modifyRenderable( $template->getRenderable() );
-
-            $dm->pushGroup(function() use ($renderInfo, $cb, $dm, $template) {
-                $dm->addDependencyInjector(new ObjectListInjector([
-                    'renderInfo' => $renderInfo,
-                    "template" => $template
-                ]));
-                $dm->call($cb);
-            });
-        }
-    }
 }
