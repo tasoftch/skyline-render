@@ -46,6 +46,13 @@ interface ExtendableTemplateInterface extends TemplateInterface
     public function getTemplateExtension(string $reuseIdentifier): ?TemplateExtensionInterface;
 
     /**
+     * Return all extensions
+     *
+     * @return TemplateExtensionInterface[]
+     */
+    public function getTemplateExtensions(): array;
+
+    /**
      * Registers an extension template as extension.
      *
      * @param TemplateExtensionInterface $extension

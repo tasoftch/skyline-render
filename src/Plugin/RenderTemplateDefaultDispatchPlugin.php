@@ -65,20 +65,11 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
 
             }
         } elseif($eventName == static::EVENT_BODY_RENDER) {
-            $this->renderTemplate($eventManager, $template, $event->getInfo());
+            // Render the template right now in body phase
+            $eventManager->renderTemplate($template, $event->getInfo());
         } elseif($eventName == static::EVENT_FOOTER_RENDER) {
 
         } else
             parent::__invoke($eventName, $event, $eventManager, $arguments);
     }
-
-
-    /**
-     * Renders the main template that needs to be renderes by original event.
-     *
-     * @param AbstractRender $render
-     * @param TemplateInterface $template
-     * @param RenderInfoInterface $renderInfo
-     */
-
 }
