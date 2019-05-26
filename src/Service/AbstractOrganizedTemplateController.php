@@ -35,6 +35,7 @@
 namespace Skyline\Render\Service;
 
 
+use Generator;
 use Skyline\Render\Template\TemplateInterface;
 
 abstract class AbstractOrganizedTemplateController extends AbstractTemplateController
@@ -122,7 +123,7 @@ abstract class AbstractOrganizedTemplateController extends AbstractTemplateContr
     }
 
     // Template ID providers
-    abstract protected function yieldIDsWithName(string $name): \Generator;
-    abstract protected function yieldIDsInCatalog(string $name): \Generator;
-    abstract protected function yieldIDsWithTags(array $tags, bool $all = true): \Generator;
+    abstract protected function yieldIDsWithName(string $name): Generator;
+    abstract protected function yieldIDsInCatalog(string $name): Generator;
+    abstract protected function yieldIDsWithTags(array $tags, bool $all = true): Generator;
 }

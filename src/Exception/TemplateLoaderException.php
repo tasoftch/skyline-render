@@ -35,10 +35,11 @@
 namespace Skyline\Render\Exception;
 
 
+use RuntimeException;
 use Skyline\Render\Template\Loader\LoaderInterface;
 use Throwable;
 
-class TemplateLoaderException extends \RuntimeException
+class TemplateLoaderException extends RuntimeException
 {
     /** @var LoaderInterface */
     private $loader;

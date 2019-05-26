@@ -72,9 +72,9 @@ class CaptureErrorsPlugin implements RenderPluginInterface
     public function __invoke(string $eventName, InternRenderEvent $event, AbstractRender $eventManager, ...$arguments)
     {
         if($eventName == AbstractRender::EVENT_PRE_RENDER) {
-            set_error_handler(function($code, $msg, $file, $line) use ($event) {
-                if(method_exists($render = $event->getRender(), "handleError"))
-                    return $render->handleError($code, $msg, $file, $line);
+            set_error_handler(function($code, $msg, $file, $line) use ($eventManager) {
+                if(method_exists($eventManager, "handleError"))
+                    return $eventManager->handleError($code, $msg, $file, $line);
                 return false;
             }, $this->errorCodes);
         } else {

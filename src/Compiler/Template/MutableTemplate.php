@@ -57,6 +57,7 @@ class MutableTemplate implements TemplateInterface, Serializable
 
     /**
      * MutableTemplate constructor.
+     * @param string $templateClass
      * @param $id
      * @param string $name
      * @param string|null $catalogName

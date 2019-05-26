@@ -174,7 +174,7 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
 
     public function getTemplateController(): AbstractTemplateController {
         $sm = $this->getServiceManager();
-        /** @var DependencyManager $dm */
+        /** @var AbstractTemplateController $dm */
         $dm = $sm->get("templateController");
         return $dm;
     }

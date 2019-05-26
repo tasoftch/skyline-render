@@ -36,7 +36,6 @@ namespace Skyline\Render\Template\Loader;
 
 
 use Skyline\Render\Compiler\Template\MutableTemplate;
-use Skyline\Render\Exception\TemplateLoaderException;
 use Skyline\Render\Template\FileTemplate;
 
 class TemplateFileLoader extends AbstractTemplateClassLoader

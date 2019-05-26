@@ -32,36 +32,27 @@
  *
  */
 
-namespace Skyline\Render\Exception;
+namespace Skyline\Render\Template\Nested;
 
-
-use RuntimeException;
-use Skyline\Render\RenderInterface;
-use Throwable;
-
-class RenderException extends RuntimeException
+/**
+ * If an nestable template knows which sub templates it requires, it can implement this interface to get the required templates injected before render.
+ *
+ * @package Skyline\Render\Template\Nested
+ */
+interface NestableAwareTemplateInterface extends NestableTemplateInterface
 {
-    /** @var RenderInterface */
-    private $render;
-
-    public function __construct($message = "", $code = 0, Throwable $previous = NULL, ...$args)
-    {
-        parent::__construct(vsprintf($message, $args), $code, $previous);
-    }
+    /**
+     * Returns all known sub template identifiers this template requires to render properly.
+     * If the template does not exist, render process will fail.
+     *
+     * @return string[]
+     */
+    public function getRequiredIdentifiers(): array;
 
     /**
-     * @return RenderInterface
+     * Returns all known sub template identifiers this template needs for feature reasons
+     *
+     * @return string[]
      */
-    public function getRender(): ?RenderInterface
-    {
-        return $this->render;
-    }
-
-    /**
-     * @param RenderInterface $render
-     */
-    public function setRender(RenderInterface $render): void
-    {
-        $this->render = $render;
-    }
+    public function getOptionalIdentifiers(): array;
 }

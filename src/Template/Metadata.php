@@ -35,7 +35,9 @@
 namespace Skyline\Render\Template;
 
 
-class Metadata implements \Serializable
+use Serializable;
+
+class Metadata implements Serializable
 {
     private $name;
     private $catalogName;

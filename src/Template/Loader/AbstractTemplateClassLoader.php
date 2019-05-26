@@ -48,6 +48,7 @@ abstract class AbstractTemplateClassLoader implements LoaderInterface
     /**
      * AbstractTemplateClassLoader constructor.
      * @param string $templateClass
+     * @param string|int $templateID
      */
     public function __construct(string $templateClass, $templateID)
     {

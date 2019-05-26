@@ -24,6 +24,8 @@
 namespace Skyline\Render\Model;
 
 
+use Traversable;
+
 class ArrayModel extends AbstractModel
 {
     public function __construct($array = NULL)
@@ -37,7 +39,7 @@ class ArrayModel extends AbstractModel
     }
 
     public function addArray($array) {
-        if(is_array($array) || $array instanceof \Traversable) {
+        if(is_array($array) || $array instanceof Traversable) {
             foreach ($array as $key => $value) {
                 $this->__set($key, $value);
             }

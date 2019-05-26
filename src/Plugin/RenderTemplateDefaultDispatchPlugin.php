@@ -38,8 +38,8 @@ namespace Skyline\Render\Plugin;
 use Skyline\Render\AbstractRender;
 use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Info\RenderInfoInterface;
-use Skyline\Render\Template\ExtendableTemplateInterface;
-use Skyline\Render\Template\TemplateExtensionInterface;
+use Skyline\Render\Template\Extension\ExtendableTemplateInterface;
+use Skyline\Render\Template\Extension\TemplateExtensionInterface;
 use Skyline\Render\Template\TemplateInterface;
 use TASoft\EventManager\EventManagerInterface;
 
@@ -136,7 +136,7 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
 
     /**
      * @param AbstractRender $render
-     * @param TemplateInterface $headerTemplate
+     * @param TemplateInterface $bodyTemplate
      * @param RenderInfoInterface $renderInfo
      */
     protected function renderBody(AbstractRender $render, TemplateInterface $bodyTemplate, RenderInfoInterface $renderInfo) {

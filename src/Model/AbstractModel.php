@@ -24,7 +24,11 @@
 namespace Skyline\Render\Model;
 
 
-abstract class AbstractModel implements ModelInterface, \ArrayAccess, \Iterator, \Countable
+use ArrayAccess;
+use Countable;
+use Iterator;
+
+abstract class AbstractModel implements ModelInterface, ArrayAccess, Iterator, Countable
 {
     protected $data;
     public function __debugInfo() {

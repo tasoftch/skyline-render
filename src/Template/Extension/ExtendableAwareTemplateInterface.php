@@ -32,36 +32,28 @@
  *
  */
 
-namespace Skyline\Render\Exception;
+namespace Skyline\Render\Template\Extension;
 
 
-use RuntimeException;
-use Skyline\Render\RenderInterface;
-use Throwable;
-
-class RenderException extends RuntimeException
+/**
+ * If an extendable template knows which sub templates it requires, it can implement this interface to get the required templates injected before render.
+ *
+ * @package Skyline\Render\Template\Extension
+ */
+interface ExtendableAwareTemplateInterface extends ExtendableTemplateInterface
 {
-    /** @var RenderInterface */
-    private $render;
-
-    public function __construct($message = "", $code = 0, Throwable $previous = NULL, ...$args)
-    {
-        parent::__construct(vsprintf($message, $args), $code, $previous);
-    }
+    /**
+     * Returns all known template identifiers this template requires to render properly.
+     * If the template does not exist, render process will fail.
+     *
+     * @return string[]
+     */
+    public function getRequiredExtensionIdentifiers(): array;
 
     /**
-     * @return RenderInterface
+     * Returns all known template identifiers this template needs for feature reasons
+     *
+     * @return string[]
      */
-    public function getRender(): ?RenderInterface
-    {
-        return $this->render;
-    }
-
-    /**
-     * @param RenderInterface $render
-     */
-    public function setRender(RenderInterface $render): void
-    {
-        $this->render = $render;
-    }
+    public function getOptionalExtensionIdentifiers(): array;
 }

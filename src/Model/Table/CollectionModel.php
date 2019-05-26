@@ -23,6 +23,7 @@
 
 namespace Skyline\Render\Model\Table;
 use Skyline\Render\Model\ArrayModel;
+use Traversable;
 
 
 class CollectionModel extends ArrayModel implements TableViewDataSourceInterface
@@ -75,7 +76,7 @@ class CollectionModel extends ArrayModel implements TableViewDataSourceInterface
 
     /**
      *
-     * @return \Traversable
+     * @return Traversable
      */
     public function getData()
     {

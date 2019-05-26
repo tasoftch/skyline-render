@@ -35,7 +35,9 @@
 namespace Skyline\Render\Info;
 
 
-class RenderInfo extends \ArrayObject implements RenderInfoInterface
+use ArrayObject;
+
+class RenderInfo extends ArrayObject implements RenderInfoInterface
 {
     public function get(string $infoName)
     {

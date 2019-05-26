@@ -35,7 +35,9 @@
 namespace Skyline\Render\Template;
 
 
-abstract class AbstractTemplate implements AdvancedTemplateInterface, \Serializable
+use Serializable;
+
+abstract class AbstractTemplate implements AdvancedTemplateInterface, Serializable
 {
     private $id;
     /** @var string */
