@@ -43,19 +43,48 @@ namespace Template;
 
 use PHPUnit\Framework\TestCase;
 use Skyline\Render\Compiler\Template\MutableTemplate;
-use Skyline\Render\Template\FileTemplate;
+use Skyline\Render\Template\EvalTemplate;
+use Skyline\Render\Template\Loader\TemplateCallbackLoader;
+use Skyline\Render\Template\Loader\TemplateFileLoader;
+use Skyline\Render\Template\Loader\TemplateScriptLoader;
+use Skyline\Render\Template\MarkerTemplate;
 
 class TemplateTest extends TestCase
 {
-    public function testTemplateCreation() {
+    public function testFileTemplateCreation() {
         $file = __DIR__ . "/Example.temp.php";
-        $temp = new MutableTemplate(FileTemplate::class, $file);
+        $loader = new TemplateFileLoader($file);
 
-        (function() use ($file) {
-            if(!require $file)
-                throw new \RuntimeException();
-        })->call($temp);
+        $tmp = $loader->loadTemplate();
 
-        print_r($temp);
+        $this->assertInstanceOf(MutableTemplate::class, $tmp);
+        $this->assertEquals("Test", $tmp->getName());
+        $this->assertEquals("Catalog", $tmp->getCatalogName());
+        $this->assertEquals(["my", "Thomas"], $tmp->getTags());
+        $this->assertEquals($file, $tmp->getId());
+    }
+
+    public function testScriptTemplate() {
+        $loader = new TemplateScriptLoader(EvalTemplate::class, "myID", '$this->setName("hehe");');
+        $tmp = $loader->loadTemplate();
+
+        $this->assertInstanceOf(MutableTemplate::class, $tmp);
+        $this->assertEquals("hehe", $tmp->getName());
+    }
+
+    public function testCallbackLoader() {
+        $loader = new TemplateCallbackLoader(function(MutableTemplate $template) {
+            $template->setAttribute("TEXT", "I am a $(TEST)");
+            /** @var MarkerTemplate $tmp */
+            $tmp = $template->getTemplate();
+            $tmp->setText("I am a $(TEST)");
+        }, 'my', MarkerTemplate::class);
+
+        $tmp = $loader->loadTemplate()->getTemplate();
+        $this->assertInstanceOf(MarkerTemplate::class, $tmp);
+
+        $this->assertEquals("I am a $(TEST)", $tmp->getAttribute("TEXT"));
+
+        $this->assertEquals("I am a Thomas", $tmp->getRenderable()(["hi" => 0, "TEST" => "Thomas"], NULL));
     }
 }
