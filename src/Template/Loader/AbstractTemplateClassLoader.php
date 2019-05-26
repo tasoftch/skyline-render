@@ -38,13 +38,61 @@ namespace Skyline\Render\Template\Loader;
 use Skyline\Render\Compiler\Template\MutableTemplate;
 use Skyline\Render\Exception\TemplateLoaderException;
 
-interface LoaderInterface
+abstract class AbstractTemplateClassLoader implements LoaderInterface
 {
+    /** @var string */
+    private $templateClass;
+    /** @var string|int */
+    private $templateID;
+
     /**
-     * The loader must load a templates meta information into the mutable template
+     * AbstractTemplateClassLoader constructor.
+     * @param string $templateClass
+     */
+    public function __construct(string $templateClass, $templateID)
+    {
+        $this->templateClass = $templateClass;
+        $this->templateID = $templateID;
+    }
+
+    /**
+     * @return string
+     */
+    public function getTemplateClass(): string
+    {
+        return $this->templateClass;
+    }
+
+    /**
+     * @return int|string
+     */
+    public function getTemplateID()
+    {
+        return $this->templateID;
+    }
+
+    /**
+     * Default implementation that forwards to loadIntoMutable
      *
      * @return MutableTemplate
+     */
+    public function loadTemplate(): MutableTemplate
+    {
+        try {
+            $temp = new MutableTemplate($this->getTemplateClass(), $this->getTemplateID());
+            $this->loadIntoMutable($temp);
+            return $temp;
+        } catch (TemplateLoaderException $exception) {
+            $exception->setLoader($this);
+            throw $exception;
+        }
+    }
+
+    /**
+     * Load the template into
+     *
+     * @param MutableTemplate $template
      * @throws TemplateLoaderException
      */
-    public function loadTemplate(): MutableTemplate;
+    abstract protected function loadIntoMutable(MutableTemplate $template): void;
 }
