@@ -32,21 +32,44 @@
  *
  */
 
-use Skyline\Compiler\Factory\AbstractExtendedCompilerFactory;
-use Skyline\Compiler\Predef\ConfigurationCompiler;
-use Skyline\Compiler\Predef\OrderedConfigurationCompiler;
+namespace Skyline\Render\Plugin;
 
-return [
-    'render-config' => [
-        AbstractExtendedCompilerFactory::COMPILER_CLASS_KEY                            => OrderedConfigurationCompiler::class,
-        ConfigurationCompiler::INFO_TARGET_FILENAME_KEY     => 'render.config.php',
-        ConfigurationCompiler::INFO_PATTERN_KEY             => '/^render\.cfg\.php$/i',
-        ConfigurationCompiler::INFO_CUSTOM_FILENAME_KEY     => 'render.config.php',
-        AbstractExtendedCompilerFactory::COMPILER_DEPENDENCIES_KEY => [
-            'composer-packages-order'
-        ]
-    ],
-    "find-templates" => [
 
-    ]
-];
+use Skyline\Render\AbstractRender;
+use Skyline\Render\Event\InternRenderEvent;
+use TASoft\EventManager\EventManagerInterface;
+use TASoft\Service\ServiceForwarderTrait;
+
+class RenderTemplatePlugin implements RenderPluginInterface
+{
+    const EVENT_HEADER_RENDER = 'plugin.header';
+    const EVENT_BODY_RENDER = 'plugin.body';
+    const EVENT_FOOTER_RENDER = 'plugin.footer';
+
+    use ServiceForwarderTrait;
+
+    /**
+     * @inheritDoc
+     */
+    public function initialize(EventManagerInterface $eventManager)
+    {
+        $eventManager->addListener(AbstractRender::EVENT_MAIN_RENDER, $this, 0);
+    }
+
+    /**
+     * Event handler
+     *
+     * @param string $eventName
+     * @param InternRenderEvent $event
+     * @param AbstractRender $eventManager
+     * @param mixed ...$arguments
+     */
+    public function __invoke(string $eventName, InternRenderEvent $event, AbstractRender $eventManager, ...$arguments)
+    {
+        if($eventName == AbstractRender::EVENT_MAIN_RENDER) {
+            $eventManager->trigger(static::EVENT_HEADER_RENDER, $event);
+            $eventManager->trigger(static::EVENT_BODY_RENDER, $event);
+            $eventManager->trigger(static::EVENT_FOOTER_RENDER, $event);
+        }
+    }
+}

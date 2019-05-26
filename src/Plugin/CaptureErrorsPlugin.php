@@ -32,21 +32,53 @@
  *
  */
 
-use Skyline\Compiler\Factory\AbstractExtendedCompilerFactory;
-use Skyline\Compiler\Predef\ConfigurationCompiler;
-use Skyline\Compiler\Predef\OrderedConfigurationCompiler;
+namespace Skyline\Render\Plugin;
 
-return [
-    'render-config' => [
-        AbstractExtendedCompilerFactory::COMPILER_CLASS_KEY                            => OrderedConfigurationCompiler::class,
-        ConfigurationCompiler::INFO_TARGET_FILENAME_KEY     => 'render.config.php',
-        ConfigurationCompiler::INFO_PATTERN_KEY             => '/^render\.cfg\.php$/i',
-        ConfigurationCompiler::INFO_CUSTOM_FILENAME_KEY     => 'render.config.php',
-        AbstractExtendedCompilerFactory::COMPILER_DEPENDENCIES_KEY => [
-            'composer-packages-order'
-        ]
-    ],
-    "find-templates" => [
 
-    ]
-];
+use Skyline\Render\AbstractRender;
+use Skyline\Render\Event\InternRenderEvent;
+use TASoft\EventManager\EventManagerInterface;
+
+class CaptureErrorsPlugin implements RenderPluginInterface
+{
+    private $errorCodes = E_ALL;
+
+    /**
+     * CaptureErrorsPlugin constructor.
+     * @param int $errorCodes
+     */
+    public function __construct(int $errorCodes = E_ALL)
+    {
+        $this->errorCodes = $errorCodes;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function initialize(EventManagerInterface $eventManager)
+    {
+        $eventManager->addListener(AbstractRender::EVENT_PRE_RENDER, $this, 0);
+        $eventManager->addListener(AbstractRender::EVENT_POST_RENDER, $this, 0);
+    }
+
+    /**
+     * Event handler
+     *
+     * @param string $eventName
+     * @param InternRenderEvent $event
+     * @param AbstractRender $eventManager
+     * @param mixed ...$arguments
+     */
+    public function __invoke(string $eventName, InternRenderEvent $event, AbstractRender $eventManager, ...$arguments)
+    {
+        if($eventName == AbstractRender::EVENT_PRE_RENDER) {
+            set_error_handler(function($code, $msg, $file, $line) use ($event) {
+                if(method_exists($render = $event->getRender(), "handleError"))
+                    return $render->handleError($code, $msg, $file, $line);
+                return false;
+            }, $this->errorCodes);
+        } else {
+            restore_error_handler();
+        }
+    }
+}

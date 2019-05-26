@@ -32,21 +32,13 @@
  *
  */
 
-use Skyline\Compiler\Factory\AbstractExtendedCompilerFactory;
-use Skyline\Compiler\Predef\ConfigurationCompiler;
-use Skyline\Compiler\Predef\OrderedConfigurationCompiler;
+namespace Skyline\Render\Info;
 
-return [
-    'render-config' => [
-        AbstractExtendedCompilerFactory::COMPILER_CLASS_KEY                            => OrderedConfigurationCompiler::class,
-        ConfigurationCompiler::INFO_TARGET_FILENAME_KEY     => 'render.config.php',
-        ConfigurationCompiler::INFO_PATTERN_KEY             => '/^render\.cfg\.php$/i',
-        ConfigurationCompiler::INFO_CUSTOM_FILENAME_KEY     => 'render.config.php',
-        AbstractExtendedCompilerFactory::COMPILER_DEPENDENCIES_KEY => [
-            'composer-packages-order'
-        ]
-    ],
-    "find-templates" => [
 
-    ]
-];
+class RenderInfo extends \ArrayObject implements RenderInfoInterface
+{
+    public function get(string $infoName)
+    {
+        return $this[$infoName] ?? NULL;
+    }
+}
