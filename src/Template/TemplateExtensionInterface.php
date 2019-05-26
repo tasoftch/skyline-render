@@ -41,9 +41,11 @@ namespace Skyline\Render\Template;
  */
 interface TemplateExtensionInterface extends TemplateInterface
 {
-    const POSITION_HEADER = -1;
-    const POSITION_BODY = 0;
-    const POSITION_FOOTER = 1;
+    const POSITION_HEADER = -2;
+    const POSITION_BEFORE_BODY = -1;
+    const POSITION_AFTER_BODY = 1;
+    const POSITION_FOOTER = 2;
+
     /**
      * Returns a type for the extension
      *

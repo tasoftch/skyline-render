@@ -39,11 +39,9 @@ use Skyline\Render\AbstractRender;
 use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Info\RenderInfoInterface;
 use Skyline\Render\Template\ExtendableTemplateInterface;
+use Skyline\Render\Template\TemplateExtensionInterface;
 use Skyline\Render\Template\TemplateInterface;
-use TASoft\DI\DependencyManager;
-use TASoft\DI\Injector\ObjectListInjector;
 use TASoft\EventManager\EventManagerInterface;
-use TASoft\Service\ServiceForwarderTrait;
 
 class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
 {
@@ -57,19 +55,105 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
     public function __invoke(string $eventName, InternRenderEvent $event, AbstractRender $eventManager, ...$arguments)
     {
         $template = $event->getInfo()->get( RenderInfoInterface::INFO_TEMPLATE );
+        $renderInfo = $event->getInfo();
+
+        static $beforeBody = NULL;
+        static $afterBody = NULL;
+        static $footer = NULL;
 
         if($eventName == static::EVENT_HEADER_RENDER) {
             // Capture header event to get extensions (if available) that need to be rendered in header phase
+            $beforeBody = $afterBody = $footer = [];
 
             if($template instanceof ExtendableTemplateInterface) {
+                $extLoader = function(ExtendableTemplateInterface $templateWithExtensions) use (&$extLoader, &$beforeBody, &$afterBody, &$footer, $eventManager, $renderInfo) {
 
+                    foreach ($templateWithExtensions->getTemplateExtensions() as $reuseIdentifier => $extension) {
+                        if($extension instanceof TemplateExtensionInterface) {
+                            // Recursive load further extensions of extension
+                            if($extension instanceof ExtendableTemplateInterface)
+                                $extLoader($extension);
+
+                            switch ($extension->getPosition()) {
+                                case TemplateExtensionInterface::POSITION_HEADER:
+                                    $this->renderHeader($eventManager, $extension, $renderInfo);
+                                    break;
+                                case TemplateExtensionInterface::POSITION_BEFORE_BODY:
+                                    $beforeBody[$reuseIdentifier] = $extension;
+                                    break;
+                                case TemplateExtensionInterface::POSITION_AFTER_BODY:
+                                    $afterBody[$reuseIdentifier] = $extension;
+                                    break;
+                                case TemplateExtensionInterface::POSITION_FOOTER:
+                                    $footer[$reuseIdentifier] = $extension;
+                                    break;
+                                default:
+                                    trigger_error("Unknown position " . $extension->getPosition() . " of extension $reuseIdentifier", E_USER_WARNING);
+                            }
+                        }
+                    }
+                };
+
+                $extLoader($template);
             }
         } elseif($eventName == static::EVENT_BODY_RENDER) {
             // Render the template right now in body phase
+            $this->renderBeforeBody($eventManager, $beforeBody, $renderInfo);
             $eventManager->renderTemplate($template, $event->getInfo());
+            $this->renderAfterBody($eventManager, $afterBody, $renderInfo);
         } elseif($eventName == static::EVENT_FOOTER_RENDER) {
-
+            $this->renderFooter($eventManager, $footer, $renderInfo);
         } else
             parent::__invoke($eventName, $event, $eventManager, $arguments);
+    }
+
+    /**
+     * Called to render a header template. Please note that this method can be called multiple times with different header templates
+     *
+     * @param AbstractRender $render
+     * @param TemplateExtensionInterface $headerTemplate
+     * @param RenderInfoInterface $renderInfo
+     */
+    protected function renderHeader(AbstractRender $render, TemplateExtensionInterface $headerTemplate, RenderInfoInterface $renderInfo) {
+        $render->renderTemplate($headerTemplate, $renderInfo);
+    }
+
+    /**
+     * @param AbstractRender $render
+     * @param TemplateExtensionInterface[] $templates
+     * @param RenderInfoInterface $renderInfo
+     */
+    protected function renderBeforeBody(AbstractRender $render, array $templates, RenderInfoInterface $renderInfo) {
+        foreach($templates as $template)
+            $render->renderTemplate($template, $renderInfo);
+    }
+
+    /**
+     * @param AbstractRender $render
+     * @param TemplateInterface $headerTemplate
+     * @param RenderInfoInterface $renderInfo
+     */
+    protected function renderBody(AbstractRender $render, TemplateInterface $bodyTemplate, RenderInfoInterface $renderInfo) {
+        $render->renderTemplate($bodyTemplate, $renderInfo);
+    }
+
+    /**
+     * @param AbstractRender $render
+     * @param TemplateExtensionInterface[] $templates
+     * @param RenderInfoInterface $renderInfo
+     */
+    protected function renderAfterBody(AbstractRender $render, array $templates, RenderInfoInterface $renderInfo) {
+        foreach($templates as $template)
+            $render->renderTemplate($template, $renderInfo);
+    }
+
+    /**
+     * @param AbstractRender $render
+     * @param TemplateExtensionInterface[] $templates
+     * @param RenderInfoInterface $renderInfo
+     */
+    protected function renderFooter(AbstractRender $render, array $templates, RenderInfoInterface $renderInfo) {
+        foreach($templates as $template)
+            $render->renderTemplate($template, $renderInfo);
     }
 }
