@@ -53,6 +53,8 @@ class MutableTemplate implements TemplateInterface, Serializable
     /** @var string */
     private $className;
 
+    private $_template;
+
     /**
      * MutableTemplate constructor.
      * @param $id
@@ -158,7 +160,7 @@ class MutableTemplate implements TemplateInterface, Serializable
      * @param string $name
      * @param null $value
      * @param bool $asArray
-     * @param self
+     * @return self
      */
     public function setAttribute(string $name, $value = NULL, bool $asArray = false): self {
         if($value !== NULL) {
@@ -193,6 +195,20 @@ class MutableTemplate implements TemplateInterface, Serializable
         $content = serialize($this);
         $classLen = strlen($this->className);
         return preg_replace("/^C:\d+:\"[^\"]+\"/i", "C:$classLen:\"$this->className\"", $content);
+    }
+
+    /**
+     * Transforms the mutable template into the real requestable template.
+     *
+     * @param bool $forceNew
+     * @return TemplateInterface
+     */
+    public function getTemplate(bool $forceNew = false): TemplateInterface {
+        if($this->_template && !$forceNew)
+            return $this->_template;
+
+        $data = $this->getSerializedTemplate();
+        return $this->_template = unserialize($data);
     }
 
     public function unserialize($serialized)
