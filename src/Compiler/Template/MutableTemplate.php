@@ -35,9 +35,10 @@
 namespace Skyline\Render\Compiler\Template;
 
 
+use Serializable;
 use Skyline\Render\Template\TemplateInterface;
 
-class MutableTemplate implements TemplateInterface, \Serializable
+class MutableTemplate implements TemplateInterface, Serializable
 {
     private $id;
     /** @var string */
@@ -71,18 +72,22 @@ class MutableTemplate implements TemplateInterface, \Serializable
 
     /**
      * @param string $name
+     * @return self
      */
-    public function setName(string $name): void
+    public function setName(string $name): self
     {
         $this->name = $name;
+        return $this;
     }
 
     /**
      * @param string|null $catalogName
+     * @return self
      */
-    public function setCatalogName(?string $catalogName): void
+    public function setCatalogName(?string $catalogName): self
     {
         $this->catalogName = $catalogName;
+        return $this;
     }
 
 
@@ -120,19 +125,23 @@ class MutableTemplate implements TemplateInterface, \Serializable
     /**
      * Adds a tag if not exist
      * @param string $tag
+     * @return self
      */
-    public function addTag(string $tag) {
+    public function addTag(string $tag): self {
         if(!in_array($tag, $this->tags))
             $this->tags[] = $tag;
+        return $this;
     }
 
     /**
      * Removes a tag
      * @param string $tag
+     * @return self
      */
-    public function removeTag(string $tag) {
+    public function removeTag(string $tag): self {
         if(($idx = array_search($tag, $this->tags)) !== false)
             unset($this->tags[$idx]);
+        return $this;
     }
 
     /**
@@ -149,8 +158,9 @@ class MutableTemplate implements TemplateInterface, \Serializable
      * @param string $name
      * @param null $value
      * @param bool $asArray
+     * @param self
      */
-    public function setAttribute(string $name, $value = NULL, bool $asArray = false) {
+    public function setAttribute(string $name, $value = NULL, bool $asArray = false): self {
         if($value !== NULL) {
             if($asArray)
                 $this->attributes[$name][] = $value;
@@ -159,6 +169,7 @@ class MutableTemplate implements TemplateInterface, \Serializable
         }
         elseif(isset($this->attributes[$name]))
             unset($this->attributes[$name]);
+        return $this;
     }
 
     public function getRenderable(): callable
