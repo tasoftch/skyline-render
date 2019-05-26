@@ -67,11 +67,19 @@ abstract class AbstractConfiguredRender extends AbstractRender
     abstract protected function setup($configuration);
 
     /**
+     * Tears down after render
+     *
+     * @return void
+     */
+    abstract protected function tearDown();
+
+    /**
      * @inheritDoc
      */
     public function render(RenderInfoInterface $renderInfo)
     {
         $this->setup( $this->getConfiguration() );
         parent::render($renderInfo);
+        $this->tearDown();
     }
 }
