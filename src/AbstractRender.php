@@ -37,6 +37,7 @@ namespace Skyline\Render;
 
 use Closure;
 use Skyline\Render\Event\InternRenderEvent;
+use Skyline\Render\Exception\RenderException;
 use Skyline\Render\Info\RenderInfoInterface;
 use Skyline\Render\Service\AbstractTemplateController;
 use Skyline\Render\Template\TemplateInterface;
@@ -69,8 +70,12 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
     /**
      * @return AbstractRender|null
      */
-    public static function getCurrentRender(): ?AbstractRender
+    public static function getCurrentRender(): AbstractRender
     {
+        if(!self::$currentRender) {
+            $e = new RenderException("Calling current render when not in render context is not allowed");
+            throw $e;
+        }
         return self::$currentRender;
     }
 
