@@ -35,71 +35,22 @@
 namespace Skyline\Render\Template;
 
 
-abstract class AbstractTemplate implements AdvancedTemplateInterface, \Serializable
+interface NestableTemplateInterface extends TemplateInterface
 {
-    private $id;
-    /** @var string */
-    private $name;
-    /** @var string|null */
-    private $catalogName;
-    /** @var array */
-    private $tags = [];
-    /** @var array  */
-    private $attributes = [];
-
+    /**
+     * Templates implementing this interface may contain other sub templates.
+     *
+     * @param string $reuseIdentifier   This can be the specified identifier or a template name or id, but not catalog names or tags!
+     * @return TemplateInterface|null
+     */
+    public function getNestedTemplate(string $reuseIdentifier): ?TemplateInterface;
 
     /**
-     * @inheritDoc
+     * Registers a template as sub template
+     *
+     * @param TemplateInterface $template
+     * @param string|NULL $reuseIdentifier
+     * @return bool
      */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCatalogName(): ?string
-    {
-        return $this->catalogName;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTags(): array {
-        return $this->tags;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAttribute(string $name)
-    {
-        return $this->attributes[$name] ?? NULL;
-    }
-
-    public function serialize()
-    {
-        // Can not serialize
-    }
-
-    public function unserialize($serialized)
-    {
-        list(
-            $this->name,
-            $this->catalogName,
-            $this->tags,
-            $this->id,
-            $this->attributes
-            ) = unserialize($serialized);
-    }
+    public function registerTemplate(TemplateInterface $template, string $reuseIdentifier = NULL): bool;
 }

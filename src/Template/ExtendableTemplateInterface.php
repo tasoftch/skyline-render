@@ -35,71 +35,22 @@
 namespace Skyline\Render\Template;
 
 
-abstract class AbstractTemplate implements AdvancedTemplateInterface, \Serializable
+interface ExtendableTemplateInterface extends TemplateInterface
 {
-    private $id;
-    /** @var string */
-    private $name;
-    /** @var string|null */
-    private $catalogName;
-    /** @var array */
-    private $tags = [];
-    /** @var array  */
-    private $attributes = [];
-
+    /**
+     * Returns a registered extension
+     *
+     * @param string $reuseIdentifier
+     * @return TemplateExtensionInterface|null
+     */
+    public function getTemplateExtension(string $reuseIdentifier): ?TemplateExtensionInterface;
 
     /**
-     * @inheritDoc
+     * Registers an extension template as extension.
+     *
+     * @param TemplateExtensionInterface $extension
+     * @param string|NULL $reuseIdentifier
+     * @return bool
      */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCatalogName(): ?string
-    {
-        return $this->catalogName;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTags(): array {
-        return $this->tags;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAttribute(string $name)
-    {
-        return $this->attributes[$name] ?? NULL;
-    }
-
-    public function serialize()
-    {
-        // Can not serialize
-    }
-
-    public function unserialize($serialized)
-    {
-        list(
-            $this->name,
-            $this->catalogName,
-            $this->tags,
-            $this->id,
-            $this->attributes
-            ) = unserialize($serialized);
-    }
+    public function registerExtension(TemplateExtensionInterface $extension, string $reuseIdentifier = NULL): bool;
 }

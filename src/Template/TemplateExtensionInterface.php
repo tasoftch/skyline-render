@@ -34,72 +34,27 @@
 
 namespace Skyline\Render\Template;
 
-
-abstract class AbstractTemplate implements AdvancedTemplateInterface, \Serializable
+/**
+ * Extensions are templates that describe additional sources to render a main template. For example XST in XML or CSS in HTML.
+ *
+ * @package Skyline\Render\Template
+ */
+interface TemplateExtensionInterface extends TemplateInterface
 {
-    private $id;
-    /** @var string */
-    private $name;
-    /** @var string|null */
-    private $catalogName;
-    /** @var array */
-    private $tags = [];
-    /** @var array  */
-    private $attributes = [];
-
+    const POSITION_HEADER = -1;
+    const POSITION_BODY = 0;
+    const POSITION_FOOTER = 1;
+    /**
+     * Returns a type for the extension
+     *
+     * @return string
+     */
+    public function getType(): string;
 
     /**
-     * @inheritDoc
+     * The position where the extension should be rendered.
+     *
+     * @return int
      */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCatalogName(): ?string
-    {
-        return $this->catalogName;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTags(): array {
-        return $this->tags;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAttribute(string $name)
-    {
-        return $this->attributes[$name] ?? NULL;
-    }
-
-    public function serialize()
-    {
-        // Can not serialize
-    }
-
-    public function unserialize($serialized)
-    {
-        list(
-            $this->name,
-            $this->catalogName,
-            $this->tags,
-            $this->id,
-            $this->attributes
-            ) = unserialize($serialized);
-    }
+    public function getPosition(): int;
 }

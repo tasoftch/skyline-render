@@ -35,71 +35,26 @@
 namespace Skyline\Render\Template;
 
 
-abstract class AbstractTemplate implements AdvancedTemplateInterface, \Serializable
+interface AdvancedTemplateInterface extends TemplateInterface
 {
-    private $id;
-    /** @var string */
-    private $name;
-    /** @var string|null */
-    private $catalogName;
-    /** @var array */
-    private $tags = [];
-    /** @var array  */
-    private $attributes = [];
-
+    /**
+     * Kind of namespace of the template.
+     * @return null|string
+     */
+    public function getCatalogName(): ?string;
 
     /**
-     * @inheritDoc
+     * Get a bunch of tags to find template
+     *
+     * @return array
      */
-    public function getId()
-    {
-        return $this->id;
-    }
+    public function getTags(): array;
 
     /**
-     * @inheritDoc
+     * Gets a template attribute
+     *
+     * @param string $name
+     * @return mixed
      */
-    public function getName(): string
-    {
-        return $this->name;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getCatalogName(): ?string
-    {
-        return $this->catalogName;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getTags(): array {
-        return $this->tags;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getAttribute(string $name)
-    {
-        return $this->attributes[$name] ?? NULL;
-    }
-
-    public function serialize()
-    {
-        // Can not serialize
-    }
-
-    public function unserialize($serialized)
-    {
-        list(
-            $this->name,
-            $this->catalogName,
-            $this->tags,
-            $this->id,
-            $this->attributes
-            ) = unserialize($serialized);
-    }
+    public function getAttribute(string $name);
 }
