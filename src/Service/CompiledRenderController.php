@@ -32,34 +32,33 @@
  *
  */
 
-use Skyline\Render\CompiledRender;
-use Skyline\Render\Plugin\CaptureContentsPlugin;
-use Skyline\Render\Plugin\NullPlugin;
-use Skyline\Render\Plugin\RenderTemplateDefaultDispatchPlugin;
+namespace Skyline\Render\Service;
 
-return [
-    CompiledRender::NULL_RENDER => [
-        CompiledRender::CONFIG_PLUGINS => [
-            [
-                CompiledRender::CONFIG_PLUGIN_CLASS => NullPlugin::class
-            ]
-        ]
-    ],
-    CompiledRender::INCREMENTIAL_TEMPLATE_RENDER => [
-        CompiledRender::CONFIG_PLUGINS => [
-            [
-                CompiledRender::CONFIG_PLUGIN_CLASS => RenderTemplateDefaultDispatchPlugin::class
-            ]
-        ]
-    ],
-    CompiledRender::ATOMIC_TEMPLATE_RENDER => [
-        CompiledRender::CONFIG_PLUGINS => [
-            [
-                CompiledRender::CONFIG_PLUGIN_CLASS => CaptureContentsPlugin::class,
-            ],
-            [
-                CompiledRender::CONFIG_PLUGIN_CLASS => RenderTemplateDefaultDispatchPlugin::class
-            ]
-        ]
-    ]
-];
+
+use Skyline\Render\RenderInterface;
+
+class CompiledRenderController
+{
+    private $compiledRenderFilename;
+
+    /**
+     * CompiledRenderController constructor.
+     * @param $compiledRenderFilename
+     */
+    public function __construct($compiledRenderFilename)
+    {
+        $this->compiledRenderFilename = $compiledRenderFilename;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCompiledRenderFilename()
+    {
+        return $this->compiledRenderFilename;
+    }
+
+    public function getRender(string $name): RenderInterface {
+
+    }
+}

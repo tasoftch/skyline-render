@@ -39,7 +39,10 @@ use Skyline\Render\Info\RenderInfoInterface;
 
 interface RenderInterface
 {
-    const SKYLINE_DEFAULT_RENDER = 'default-render';
+    const NULL_RENDER = 'null-render';
+    const INCREMENTIAL_TEMPLATE_RENDER = 'incremential-t-render';
+    const ATOMIC_TEMPLATE_RENDER = 'atomic-t-render';
+
 
     /**
      * Render the information into a response
