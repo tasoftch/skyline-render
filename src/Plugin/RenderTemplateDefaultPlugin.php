@@ -37,39 +37,41 @@ namespace Skyline\Render\Plugin;
 
 use Skyline\Render\AbstractRender;
 use Skyline\Render\Event\InternRenderEvent;
+use Skyline\Render\Info\RenderInfoInterface;
+use Skyline\Render\Template\TemplateInterface;
+use TASoft\DI\DependencyManager;
+use TASoft\DI\Injector\ObjectListInjector;
 use TASoft\EventManager\EventManagerInterface;
 use TASoft\Service\ServiceForwarderTrait;
 
-class RenderTemplatePlugin implements RenderPluginInterface
+class RenderTemplateDefaultPlugin extends RenderTemplateDispatchPlugin
 {
-    const EVENT_HEADER_RENDER = 'plugin.header';
-    const EVENT_BODY_RENDER = 'plugin.body';
-    const EVENT_FOOTER_RENDER = 'plugin.footer';
-
     use ServiceForwarderTrait;
 
-    /**
-     * @inheritDoc
-     */
     public function initialize(EventManagerInterface $eventManager)
     {
-        $eventManager->addListener(AbstractRender::EVENT_MAIN_RENDER, $this, 0);
+        parent::initialize($eventManager);
+        $eventManager->addListener(static::EVENT_BODY_RENDER, $this, 100);
     }
 
-    /**
-     * Event handler
-     *
-     * @param string $eventName
-     * @param InternRenderEvent $event
-     * @param AbstractRender $eventManager
-     * @param mixed ...$arguments
-     */
     public function __invoke(string $eventName, InternRenderEvent $event, AbstractRender $eventManager, ...$arguments)
     {
-        if($eventName == AbstractRender::EVENT_MAIN_RENDER) {
-            $eventManager->trigger(static::EVENT_HEADER_RENDER, $event);
-            $eventManager->trigger(static::EVENT_BODY_RENDER, $event);
-            $eventManager->trigger(static::EVENT_FOOTER_RENDER, $event);
-        }
+        if($eventName == static::EVENT_BODY_RENDER) {
+            $sm = $this->getServiceManager();
+            /** @var DependencyManager $dm */
+            $dm = $sm->get("dependencyManager");
+
+            $template = $event->getInfo()->get( RenderInfoInterface::INFO_TEMPLATE );
+            if($template instanceof TemplateInterface) {
+                $cb = $eventManager->modifyRenderable( $template->getRenderable() );
+                $dm->pushGroup(function() use ($event, $cb, $dm) {
+                    $dm->addDependencyInjector(new ObjectListInjector([
+                        'renderInfo' => $event->getInfo()
+                    ]));
+                    $dm->call($cb);
+                });
+            }
+        } else
+            parent::__invoke($eventName, $event, $eventManager, $arguments);
     }
 }

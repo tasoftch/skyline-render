@@ -35,6 +35,7 @@
 namespace Skyline\Render;
 
 
+use Closure;
 use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Info\RenderInfoInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -87,7 +88,9 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
         $this->response = $response;
     }
 
-
+    /**
+     * @inheritDoc
+     */
     public function render(RenderInfoInterface $renderInfo)
     {
         $event = new InternRenderEvent($this->getRequest(), $this, $renderInfo);
@@ -98,5 +101,17 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
         $this->trigger(static::EVENT_POST_RENDER, $event);
 
         $this->setResponse( $event->getResponse() );
+    }
+
+    /**
+     * Called from plugins that handle renderable templates.
+     *
+     * @param callable $renderable
+     * @return callable
+     */
+    public function modifyRenderable(callable $renderable): callable {
+        if($renderable instanceof Closure)
+            $renderable = $renderable->bindTo($this, static::class);
+        return $renderable;
     }
 }
