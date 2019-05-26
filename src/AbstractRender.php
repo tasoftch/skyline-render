@@ -56,6 +56,17 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
     /** @var Response|null */
     private $response;
 
+    /** @var AbstractRender|null */
+    private static $currentRender;
+
+    /**
+     * @return AbstractRender|null
+     */
+    public static function getCurrentRender(): ?AbstractRender
+    {
+        return self::$currentRender;
+    }
+
     /**
      * @return Request
      */
@@ -96,10 +107,13 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
         $event = new InternRenderEvent($this->getRequest(), $this, $renderInfo);
         $event->setResponse($this->getResponse());
 
+        self::$currentRender = $this;
+
         $this->trigger(static::EVENT_PRE_RENDER, $event);
         $this->trigger(static::EVENT_MAIN_RENDER, $event);
         $this->trigger(static::EVENT_POST_RENDER, $event);
 
+        self::$currentRender = NULL;
         $this->setResponse( $event->getResponse() );
     }
 
