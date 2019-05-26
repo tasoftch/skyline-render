@@ -37,7 +37,9 @@ namespace Skyline\Render\Plugin;
 
 use Skyline\Render\AbstractRender;
 use Skyline\Render\Event\InternRenderEvent;
+use Skyline\Render\Exception\TemplateNotFoundException;
 use Skyline\Render\Info\RenderInfoInterface;
+use Skyline\Render\Template\Extension\ExtendableAwareTemplateInterface;
 use Skyline\Render\Template\Extension\ExtendableTemplateInterface;
 use Skyline\Render\Template\Extension\TemplateExtensionInterface;
 use Skyline\Render\Template\TemplateInterface;
@@ -73,6 +75,8 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
 
             if($template instanceof ExtendableTemplateInterface) {
                 $extLoader = function(ExtendableTemplateInterface $templateWithExtensions) use (&$extLoader, &$beforeBody, &$afterBody, &$footer, $eventManager, $renderInfo) {
+
+                    if($templateWithExtensions instanceof ExtendableAwareTemplateInterface)
 
                     foreach ($templateWithExtensions->getTemplateExtensions() as $reuseIdentifier => $extension) {
                         if($extension instanceof TemplateExtensionInterface) {
@@ -111,6 +115,43 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
             $this->renderFooter($eventManager, $footer, $renderInfo);
         } else
             parent::__invoke($eventName, $event, $eventManager, $arguments);
+    }
+
+    /**
+     * This method is called for templates that know about their extensions.
+     *
+     * @param ExtendableAwareTemplateInterface $template
+     */
+    protected function loadExtensionAwareTemplate(ExtendableAwareTemplateInterface $template) {
+        $render = AbstractRender::getCurrentRender();
+        $tc = $render->getTemplateController();
+
+        foreach($template->getRequiredExtensionIdentifiers() as $reuse => $identifier) {
+            $tmp = $tc->getTemplate($identifier);
+            if(!$tmp) {
+                $e = new TemplateNotFoundException("Template $identifier not found");
+                $e->setRender($render);
+                $e->setTemplateID($identifier);
+                throw $e;
+            }
+
+            if($tmp instanceof TemplateExtensionInterface)
+                $template->registerExtension($tmp, is_string($reuse) ? $reuse : NULL);
+            else {
+                trigger_error(sprintf("Template %s (%s) does not implement %s", $tmp->getName(), $tmp->getID(), TemplateExtensionInterface::class), E_USER_WARNING);
+            }
+        }
+
+        foreach($template->getOptionalExtensionIdentifiers() as $reuse => $identifier) {
+            $tmp = $tc->getTemplate($identifier);
+            if($tmp) {
+                if($tmp instanceof TemplateExtensionInterface)
+                    $template->registerExtension($tmp, is_string($reuse) ? $reuse : NULL);
+                else {
+                    trigger_error(sprintf("Template %s (%s) does not implement %s", $tmp->getName(), $tmp->getID(), TemplateExtensionInterface::class), E_USER_WARNING);
+                }
+            }
+        }
     }
 
     /**
