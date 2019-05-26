@@ -32,25 +32,32 @@
  *
  */
 
-namespace Skyline\Render\Template;
+namespace Skyline\Render\Template\Extension;
+use Skyline\Render\Template\TemplateInterface;
 
-
-interface NestableTemplateInterface extends TemplateInterface
+interface ExtendableTemplateInterface extends TemplateInterface
 {
     /**
-     * Templates implementing this interface may contain other sub templates.
+     * Returns a registered extension
      *
-     * @param string $reuseIdentifier   This can be the specified identifier or a template name or id, but not catalog names or tags!
-     * @return TemplateInterface|null
+     * @param string $reuseIdentifier
+     * @return TemplateExtensionInterface|null
      */
-    public function getNestedTemplate(string $reuseIdentifier): ?TemplateInterface;
+    public function getTemplateExtension(string $reuseIdentifier): ?TemplateExtensionInterface;
 
     /**
-     * Registers a template as sub template
+     * Return all extensions
      *
-     * @param TemplateInterface $template
+     * @return TemplateExtensionInterface[]
+     */
+    public function getTemplateExtensions(): array;
+
+    /**
+     * Registers an extension template as extension.
+     *
+     * @param TemplateExtensionInterface $extension
      * @param string|NULL $reuseIdentifier
      * @return bool
      */
-    public function registerTemplate(TemplateInterface $template, string $reuseIdentifier = NULL): bool;
+    public function registerExtension(TemplateExtensionInterface $extension, string $reuseIdentifier = NULL): bool;
 }

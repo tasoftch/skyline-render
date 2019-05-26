@@ -32,22 +32,32 @@
  *
  */
 
-namespace Skyline\Render\Compiler;
+namespace Skyline\Render\Template\Extension;
+use Skyline\Render\Template\TemplateInterface;
 
-
-use Skyline\Compiler\AbstractCompiler;
-use Skyline\Compiler\CompilerContext;
-use Skyline\Compiler\Project\Attribute\SearchPathAttribute;
-
-class FindTemplatesCompiler extends AbstractCompiler
+/**
+ * Extensions are templates that describe additional sources to render a main template. For example XST in XML or CSS in HTML.
+ *
+ * @package Skyline\Render\Template
+ */
+interface TemplateExtensionInterface extends TemplateInterface
 {
-    public function compile(CompilerContext $context)
-    {
-        $spt = $context->getProjectSearchPaths(SearchPathAttribute::SEARCH_PATH_TEMPLATES);
-        print_r($spt);
+    const POSITION_HEADER = -2;
+    const POSITION_BEFORE_BODY = -1;
+    const POSITION_AFTER_BODY = 1;
+    const POSITION_FOOTER = 2;
 
-        foreach($context->getSourceCodeManager()->yieldSourceFiles("/\.temp\.php$/i", $spt) as $template) {
-            print_r($template);
-        }
-    }
+    /**
+     * Returns a type for the extension
+     *
+     * @return string
+     */
+    public function getType(): string;
+
+    /**
+     * The position where the extension should be rendered.
+     *
+     * @return int
+     */
+    public function getPosition(): int;
 }

@@ -32,32 +32,40 @@
  *
  */
 
-namespace Skyline\Render\Template;
+namespace Skyline\Render\Template\Extension;
 
 
-interface ExtendableTemplateInterface extends TemplateInterface
+use Skyline\Render\Template\AbstractTemplate;
+
+abstract class AbstractExtendableTemplate extends AbstractTemplate implements ExtendableTemplateInterface
 {
-    /**
-     * Returns a registered extension
-     *
-     * @param string $reuseIdentifier
-     * @return TemplateExtensionInterface|null
-     */
-    public function getTemplateExtension(string $reuseIdentifier): ?TemplateExtensionInterface;
+    protected $extensions = [];
 
     /**
-     * Return all extensions
-     *
-     * @return TemplateExtensionInterface[]
+     * @inheritDoc
      */
-    public function getTemplateExtensions(): array;
+    public function getTemplateExtension(string $reuseIdentifier): ?TemplateExtensionInterface
+    {
+        return $this->extensions[$reuseIdentifier] ?? NULL;
+    }
 
     /**
-     * Registers an extension template as extension.
-     *
-     * @param TemplateExtensionInterface $extension
-     * @param string|NULL $reuseIdentifier
-     * @return bool
+     * @inheritDoc
      */
-    public function registerExtension(TemplateExtensionInterface $extension, string $reuseIdentifier = NULL): bool;
+    public function getTemplateExtensions(): array
+    {
+        return array_unique($this->extensions, SORT_REGULAR);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerExtension(TemplateExtensionInterface $extension, string $reuseIdentifier = NULL): bool
+    {
+        if($reuseIdentifier)
+            $this->extensions[$reuseIdentifier] = $extension;
+        $this->extensions[$extension->getID()] = $extension;
+        $this->extensions[$extension->getName()] = $extension;
+        return true;
+    }
 }

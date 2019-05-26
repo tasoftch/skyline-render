@@ -32,31 +32,25 @@
  *
  */
 
-namespace Skyline\Render\Template;
+namespace Skyline\Render\Template\Nested;
+use Skyline\Render\Template\TemplateInterface;
 
-/**
- * Extensions are templates that describe additional sources to render a main template. For example XST in XML or CSS in HTML.
- *
- * @package Skyline\Render\Template
- */
-interface TemplateExtensionInterface extends TemplateInterface
+interface NestableTemplateInterface extends TemplateInterface
 {
-    const POSITION_HEADER = -2;
-    const POSITION_BEFORE_BODY = -1;
-    const POSITION_AFTER_BODY = 1;
-    const POSITION_FOOTER = 2;
+    /**
+     * Templates implementing this interface may contain other sub templates.
+     *
+     * @param string $reuseIdentifier   This can be the specified identifier or a template name or id, but not catalog names or tags!
+     * @return TemplateInterface|null
+     */
+    public function getNestedTemplate(string $reuseIdentifier): ?TemplateInterface;
 
     /**
-     * Returns a type for the extension
+     * Registers a template as sub template
      *
-     * @return string
+     * @param TemplateInterface $template
+     * @param string|NULL $reuseIdentifier
+     * @return bool
      */
-    public function getType(): string;
-
-    /**
-     * The position where the extension should be rendered.
-     *
-     * @return int
-     */
-    public function getPosition(): int;
+    public function registerTemplate(TemplateInterface $template, string $reuseIdentifier = NULL): bool;
 }

@@ -38,6 +38,7 @@ namespace Skyline\Render;
 use Closure;
 use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Info\RenderInfoInterface;
+use Skyline\Render\Service\AbstractTemplateController;
 use Skyline\Render\Template\TemplateInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -143,10 +144,7 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
      */
     public function renderTemplate(TemplateInterface $template, RenderInfoInterface $renderInfo) {
         if($template instanceof TemplateInterface) {
-            $sm = $this->getServiceManager();
-            /** @var DependencyManager $dm */
-            $dm = $sm->get("dependencyManager");
-
+            $dm = $this->getDependencyManager();
             $cb = $this->modifyRenderable( $template->getRenderable() );
 
             $dm->pushGroup(function() use ($renderInfo, $cb, $dm, $template) {
@@ -157,5 +155,27 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
                 $dm->call($cb);
             });
         }
+    }
+
+
+    // Services
+
+    /**
+     * Fetches the dependency manager from services
+     *
+     * @return DependencyManager
+     */
+    public function getDependencyManager(): DependencyManager {
+        $sm = $this->getServiceManager();
+        /** @var DependencyManager $dm */
+        $dm = $sm->get("dependencyManager");
+        return $dm;
+    }
+
+    public function getTemplateController(): AbstractTemplateController {
+        $sm = $this->getServiceManager();
+        /** @var DependencyManager $dm */
+        $dm = $sm->get("templateController");
+        return $dm;
     }
 }

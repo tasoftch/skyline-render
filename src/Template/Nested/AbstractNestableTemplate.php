@@ -32,22 +32,33 @@
  *
  */
 
-namespace Skyline\Render\Compiler;
+namespace Skyline\Render\Template\Nested;
 
 
-use Skyline\Compiler\AbstractCompiler;
-use Skyline\Compiler\CompilerContext;
-use Skyline\Compiler\Project\Attribute\SearchPathAttribute;
+use Skyline\Render\Template\AbstractTemplate;
+use Skyline\Render\Template\TemplateInterface;
 
-class FindTemplatesCompiler extends AbstractCompiler
+abstract class AbstractNestableTemplate extends AbstractTemplate implements NestableTemplateInterface
 {
-    public function compile(CompilerContext $context)
-    {
-        $spt = $context->getProjectSearchPaths(SearchPathAttribute::SEARCH_PATH_TEMPLATES);
-        print_r($spt);
+    protected $subTemplates = [];
 
-        foreach($context->getSourceCodeManager()->yieldSourceFiles("/\.temp\.php$/i", $spt) as $template) {
-            print_r($template);
-        }
+    /**
+     * @inheritDoc
+     */
+    public function getNestedTemplate(string $reuseIdentifier): ?TemplateInterface
+    {
+        return $this->subTemplates[$reuseIdentifier] ?? NULL;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerTemplate(TemplateInterface $template, string $reuseIdentifier = NULL): bool
+    {
+        if($reuseIdentifier)
+            $this->subTemplates[$reuseIdentifier] = $template;
+        $this->subTemplates[$template->getID()] = $template;
+        $this->subTemplates[$template->getName()] = $template;
+        return true;
     }
 }

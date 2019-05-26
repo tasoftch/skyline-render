@@ -32,22 +32,17 @@
  *
  */
 
-namespace Skyline\Render\Compiler;
+use Skyline\Kernel\Config\MainKernelConfig;
+use Skyline\Render\Service\CompiledRenderController;
+use TASoft\Service\Config\AbstractFileConfiguration;
 
-
-use Skyline\Compiler\AbstractCompiler;
-use Skyline\Compiler\CompilerContext;
-use Skyline\Compiler\Project\Attribute\SearchPathAttribute;
-
-class FindTemplatesCompiler extends AbstractCompiler
-{
-    public function compile(CompilerContext $context)
-    {
-        $spt = $context->getProjectSearchPaths(SearchPathAttribute::SEARCH_PATH_TEMPLATES);
-        print_r($spt);
-
-        foreach($context->getSourceCodeManager()->yieldSourceFiles("/\.temp\.php$/i", $spt) as $template) {
-            print_r($template);
-        }
-    }
-}
+return [
+    MainKernelConfig::CONFIG_SERVICES => [
+        "renderController" => [
+            AbstractFileConfiguration::SERVICE_CLASS => CompiledRenderController::class,
+            AbstractFileConfiguration::SERVICE_INIT_ARGUMENTS => [
+                'renderFile' => '$(C)/render.config.php'
+            ]
+        ]
+    ]
+];
