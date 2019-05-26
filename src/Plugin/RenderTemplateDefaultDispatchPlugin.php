@@ -44,7 +44,7 @@ use TASoft\DI\Injector\ObjectListInjector;
 use TASoft\EventManager\EventManagerInterface;
 use TASoft\Service\ServiceForwarderTrait;
 
-class RenderTemplateDefaultPlugin extends RenderTemplateDispatchPlugin
+class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
 {
     use ServiceForwarderTrait;
 
@@ -56,22 +56,35 @@ class RenderTemplateDefaultPlugin extends RenderTemplateDispatchPlugin
 
     public function __invoke(string $eventName, InternRenderEvent $event, AbstractRender $eventManager, ...$arguments)
     {
-        if($eventName == static::EVENT_BODY_RENDER) {
+        $template = $event->getInfo()->get( RenderInfoInterface::INFO_TEMPLATE );
+
+        if($eventName == static::EVENT_HEADER_RENDER) {
+            // Capture header event to get extensions (if available first)
+
+        } elseif($eventName == static::EVENT_BODY_RENDER) {
+            $this->renderTemplate($eventManager, $template, $event->getInfo());
+        } elseif($eventName == static::EVENT_FOOTER_RENDER) {
+
+        } else
+            parent::__invoke($eventName, $event, $eventManager, $arguments);
+    }
+
+
+    protected function renderTemplate(AbstractRender $render, TemplateInterface $template, RenderInfoInterface $renderInfo) {
+        if($template instanceof TemplateInterface) {
             $sm = $this->getServiceManager();
             /** @var DependencyManager $dm */
             $dm = $sm->get("dependencyManager");
 
-            $template = $event->getInfo()->get( RenderInfoInterface::INFO_TEMPLATE );
-            if($template instanceof TemplateInterface) {
-                $cb = $eventManager->modifyRenderable( $template->getRenderable() );
-                $dm->pushGroup(function() use ($event, $cb, $dm) {
-                    $dm->addDependencyInjector(new ObjectListInjector([
-                        'renderInfo' => $event->getInfo()
-                    ]));
-                    $dm->call($cb);
-                });
-            }
-        } else
-            parent::__invoke($eventName, $event, $eventManager, $arguments);
+            $cb = $render->modifyRenderable( $template->getRenderable() );
+
+            $dm->pushGroup(function() use ($renderInfo, $cb, $dm, $template) {
+                $dm->addDependencyInjector(new ObjectListInjector([
+                    'renderInfo' => $renderInfo,
+                    "template" => $template
+                ]));
+                $dm->call($cb);
+            });
+        }
     }
 }
