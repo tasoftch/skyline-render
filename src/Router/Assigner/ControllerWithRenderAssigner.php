@@ -67,6 +67,17 @@ class ControllerWithRenderAssigner implements PartialAssignerInterface
 
                 return $actionDescription->getRenderName() && $parts[0] && $actionDescription->getMethodName() ? true : false;
             }
+        } elseif(is_array($information)) {
+            if(isset($information["render"]) && $actionDescription instanceof MutableRenderDescription)
+                $actionDescription->setRenderName( $information["render"] );
+            if(isset($information["controller"]))
+                $actionDescription->setActionControllerClass( $information["controller"] );
+            if(isset($information["method"]))
+                $actionDescription->setMethodName( $information["method"] );
+
+
+            return (!($actionDescription instanceof MutableRenderDescription) || $actionDescription->getRenderName()) && $actionDescription->getActionControllerClass() && $actionDescription->getMethodName() ? true : false;
+
         }
         return false;
     }
