@@ -32,21 +32,45 @@
  *
  */
 
-namespace Skyline\Render\Compiler;
+namespace Skyline\Render\Router\Description;
 
 
-use Skyline\Compiler\AbstractCompiler;
-use Skyline\Compiler\CompilerContext;
-use Skyline\Compiler\Project\Attribute\SearchPathAttribute;
+use Skyline\Router\Description\MutableActionDescriptionInterface;
 
-class FindTemplatesCompiler extends AbstractCompiler
+class MutableRenderDescription extends RenderActionDescription implements MutableActionDescriptionInterface
 {
-    public function compile(CompilerContext $context)
+    /**
+     * MutableRenderDescription constructor.
+     * @param string $actionControllerClass
+     * @param string $methodName
+     * @param string $renderName
+     */
+    public function __construct(string $actionControllerClass = "", string $methodName = "", string $renderName = "")
     {
-        $spt = $context->getProjectSearchPaths(SearchPathAttribute::SEARCH_PATH_TEMPLATES);
+        parent::__construct($actionControllerClass, $methodName, $renderName);
+    }
 
-        foreach($context->getSourceCodeManager()->yieldSourceFiles("/\.temp\.php$/i", $spt) as $template) {
-            print_r($template);
-        }
+    /**
+     * @param string $actionControllerClass
+     */
+    public function setActionControllerClass(string $actionControllerClass): void
+    {
+        $this->actionControllerClass = $actionControllerClass;
+    }
+
+    /**
+     * @param string $methodName
+     */
+    public function setMethodName(string $methodName): void
+    {
+        $this->methodName = $methodName;
+    }
+
+    /**
+     * @param string $renderName
+     */
+    public function setRenderName(string $renderName): void
+    {
+        $this->renderName = $renderName;
     }
 }

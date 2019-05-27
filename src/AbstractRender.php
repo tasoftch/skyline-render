@@ -145,9 +145,9 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
      * This method should render a template without care about extensions and nestings.
      *
      * @param TemplateInterface $template
-     * @param RenderInfoInterface $renderInfo
+     * @param RenderInfoInterface|null $renderInfo
      */
-    public function renderTemplate(TemplateInterface $template, RenderInfoInterface $renderInfo) {
+    public function renderTemplate(TemplateInterface $template, RenderInfoInterface $renderInfo = NULL) {
         if($template instanceof TemplateInterface) {
             $dm = $this->getDependencyManager();
             $cb = $this->modifyRenderable( $template->getRenderable() );

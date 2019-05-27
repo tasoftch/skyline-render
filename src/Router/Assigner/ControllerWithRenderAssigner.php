@@ -32,21 +32,42 @@
  *
  */
 
-namespace Skyline\Render\Compiler;
+namespace Skyline\Render\Router\Assigner;
 
 
-use Skyline\Compiler\AbstractCompiler;
-use Skyline\Compiler\CompilerContext;
-use Skyline\Compiler\Project\Attribute\SearchPathAttribute;
+use Skyline\Render\Router\Description\MutableRenderDescription;
+use Skyline\Router\Description\MutableActionDescriptionInterface;
+use Skyline\Router\PartialAssigner\PartialAssignerInterface;
 
-class FindTemplatesCompiler extends AbstractCompiler
+class ControllerWithRenderAssigner implements PartialAssignerInterface
 {
-    public function compile(CompilerContext $context)
+    /**
+     * @inheritDoc
+     */
+    public function routePartial($information, MutableActionDescriptionInterface $actionDescription): bool
     {
-        $spt = $context->getProjectSearchPaths(SearchPathAttribute::SEARCH_PATH_TEMPLATES);
+        if(is_string($information) && $actionDescription instanceof MutableRenderDescription) {
+            $parts = explode("::", $information, 3);
+            if(count($parts) == 3) {
+                list($renderClass, $className, $method) = $parts;
+                $actionDescription->setRenderName(trim($renderClass));
+                $actionDescription->setActionControllerClass( trim($className) );
+                $actionDescription->setMethodName( trim($method) );
 
-        foreach($context->getSourceCodeManager()->yieldSourceFiles("/\.temp\.php$/i", $spt) as $template) {
-            print_r($template);
+                return $renderClass && $className && $method ? true : false;
+            }
+            elseif(count($parts) == 2) {
+                list($className, $method) = $parts;
+                $actionDescription->setActionControllerClass( trim($className) );
+                $actionDescription->setMethodName( trim($method) );
+
+                return $actionDescription->getRenderName() && $className && $method ? true : false;
+            } elseif (count($parts) == 1) {
+                $actionDescription->setActionControllerClass( trim($parts[0]) );
+
+                return $actionDescription->getRenderName() && $parts[0] && $actionDescription->getMethodName() ? true : false;
+            }
         }
+        return false;
     }
 }

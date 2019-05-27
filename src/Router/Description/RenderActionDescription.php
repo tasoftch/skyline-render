@@ -32,21 +32,26 @@
  *
  */
 
-namespace Skyline\Render\Compiler;
+namespace Skyline\Render\Router\Description;
 
+use Skyline\Router\Description\ActionDescription;
 
-use Skyline\Compiler\AbstractCompiler;
-use Skyline\Compiler\CompilerContext;
-use Skyline\Compiler\Project\Attribute\SearchPathAttribute;
-
-class FindTemplatesCompiler extends AbstractCompiler
+class RenderActionDescription extends ActionDescription
 {
-    public function compile(CompilerContext $context)
-    {
-        $spt = $context->getProjectSearchPaths(SearchPathAttribute::SEARCH_PATH_TEMPLATES);
+    /** @var string */
+    protected $renderName;
 
-        foreach($context->getSourceCodeManager()->yieldSourceFiles("/\.temp\.php$/i", $spt) as $template) {
-            print_r($template);
-        }
+    public function __construct(string $actionControllerClass, string $methodName, string $renderName)
+    {
+        parent::__construct($actionControllerClass, $methodName);
+        $this->renderName = $renderName;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRenderName(): string
+    {
+        return $this->renderName;
     }
 }

@@ -32,21 +32,18 @@
  *
  */
 
-namespace Skyline\Render\Compiler;
+namespace Skyline\Render\Router;
 
 
-use Skyline\Compiler\AbstractCompiler;
-use Skyline\Compiler\CompilerContext;
-use Skyline\Compiler\Project\Attribute\SearchPathAttribute;
+use Skyline\Render\Router\Description\MutableRenderDescription;
 
-class FindTemplatesCompiler extends AbstractCompiler
+trait RouterMutableRenderDescriptionTrait
 {
-    public function compile(CompilerContext $context)
-    {
-        $spt = $context->getProjectSearchPaths(SearchPathAttribute::SEARCH_PATH_TEMPLATES);
-
-        foreach($context->getSourceCodeManager()->yieldSourceFiles("/\.temp\.php$/i", $spt) as $template) {
-            print_r($template);
-        }
+    /**
+     * Used by default implementation to specify a default mutable action description class
+     * @return string
+     */
+    protected function getMutableActionDescriptionClass(): string {
+        return MutableRenderDescription::class;
     }
 }
