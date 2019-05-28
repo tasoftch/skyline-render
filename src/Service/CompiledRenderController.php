@@ -37,7 +37,7 @@ namespace Skyline\Render\Service;
 
 use Skyline\Render\RenderInterface;
 
-class CompiledRenderController
+class CompiledRenderController implements RenderControllerInterface
 {
     private $compiledRenderFilename;
 

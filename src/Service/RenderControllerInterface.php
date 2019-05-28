@@ -32,29 +32,16 @@
  *
  */
 
-namespace Skyline\Render;
+namespace Skyline\Render\Service;
 
 
-use Skyline\Render\Info\RenderInfoInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Skyline\Render\RenderInterface;
 
-interface RenderInterface
+interface RenderControllerInterface
 {
-    const NULL_RENDER = 'null-render';
-    const INCREMENTIAL_TEMPLATE_RENDER = 'incremential-t-render';
-    const ATOMIC_TEMPLATE_RENDER = 'atomic-t-render';
-
-
     /**
-     * Render the information into a response
-     *
-     * @param RenderInfoInterface $renderInfo
-     * @return void
+     * @param string $renderName
+     * @return RenderInterface|null
      */
-    public function render(RenderInfoInterface $renderInfo);
-
-    /**
-     * @return Response
-     */
-    public function getResponse(): Response;
+    public function getRender(string $renderName): ?RenderInterface;
 }
