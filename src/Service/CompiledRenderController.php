@@ -35,11 +35,13 @@
 namespace Skyline\Render\Service;
 
 
+use Skyline\Render\Exception\RenderException;
 use Skyline\Render\RenderInterface;
 
 class CompiledRenderController implements RenderControllerInterface
 {
     private $compiledRenderFilename;
+    private $compiledRenderInfo;
 
     /**
      * CompiledRenderController constructor.
@@ -59,6 +61,16 @@ class CompiledRenderController implements RenderControllerInterface
     }
 
     public function getRender(string $name): RenderInterface {
+        if(NULL === $this->compiledRenderInfo) {
+            $this->compiledRenderInfo = require getcwd() . DIRECTORY_SEPARATOR . $this->getCompiledRenderFilename();
+        }
 
+        var_dump($name);
+
+        if($renderInfo = $this->compiledRenderInfo[ $name ] ?? NULL) {
+            var_dump($this->compiledRenderInfo);
+        } else {
+            throw new RenderException("Could not find desired render $name");
+        }
     }
 }

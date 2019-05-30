@@ -35,6 +35,7 @@
 namespace Skyline\Render\Router\Assigner;
 
 
+use Skyline\Render\Router\Description\MutableRegexRenderActionDescription;
 use Skyline\Render\Router\Description\MutableRenderDescription;
 use Skyline\Router\Description\MutableActionDescriptionInterface;
 use Skyline\Router\PartialAssigner\PartialAssignerInterface;
@@ -68,7 +69,7 @@ class ControllerWithRenderAssigner implements PartialAssignerInterface
                 return $actionDescription->getRenderName() && $parts[0] && $actionDescription->getMethodName() ? true : false;
             }
         } elseif(is_array($information)) {
-            if(isset($information["render"]) && $actionDescription instanceof MutableRenderDescription)
+            if(isset($information["render"]) && $actionDescription instanceof MutableRenderDescription || $actionDescription instanceof MutableRegexRenderActionDescription)
                 $actionDescription->setRenderName( $information["render"] );
             if(isset($information["controller"]))
                 $actionDescription->setActionControllerClass( $information["controller"] );
