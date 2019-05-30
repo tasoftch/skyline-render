@@ -48,4 +48,5 @@ interface RenderInfoInterface
      * @return mixed|null
      */
     public function get(string $infoName);
+    public function set(string $infoName, $infoValue);
 }

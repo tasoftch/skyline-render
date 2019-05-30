@@ -43,4 +43,9 @@ class RenderInfo extends ArrayObject implements RenderInfoInterface
     {
         return $this[$infoName] ?? NULL;
     }
+
+    public function set(string $infoName, $infoValue)
+    {
+        $this[$infoName] = $infoValue;
+    }
 }
