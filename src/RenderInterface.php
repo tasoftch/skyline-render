@@ -57,4 +57,11 @@ interface RenderInterface
      * @return Response
      */
     public function getResponse(): ?Response;
+
+    /**
+     * Define a response to render in.
+     *
+     * @param Response $response
+     */
+    public function setResponse(Response $response):void;
 }
