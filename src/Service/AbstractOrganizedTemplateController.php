@@ -38,7 +38,7 @@ namespace Skyline\Render\Service;
 use Generator;
 use Skyline\Render\Template\TemplateInterface;
 
-abstract class AbstractOrganizedTemplateController extends AbstractTemplateController
+abstract class AbstractOrganizedTemplateController extends AbstractTemplateController implements OrganizedTemplateControllerInterface
 {
     /**
      * Finds all templates with given name

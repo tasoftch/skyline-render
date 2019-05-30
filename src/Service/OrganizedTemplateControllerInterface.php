@@ -37,30 +37,29 @@ namespace Skyline\Render\Service;
 
 use Skyline\Render\Template\TemplateInterface;
 
-abstract class AbstractTemplateController implements TemplateControllerInterface
+interface OrganizedTemplateControllerInterface
 {
-    private $templates;
-
     /**
-     * @inheritDoc
-     */
-    public function getTemplate($templateID): ?TemplateInterface {
-        if(isset($this->templates[$templateID]) && $this->templates[$templateID] === false)
-            return NULL;
-        if(!isset($this->templates[$templateID])) {
-            $t = $this->loadTemplate($templateID);
-            $this->templates[$templateID] = $t ?: false;
-            if(!$t)
-                trigger_error("No template #$templateID found", E_USER_WARNING);
-        }
-        return $this->templates[$templateID] ?: NULL;
-    }
-
-    /**
-     * Loads the requested template
+     * Returns first template found with name
      *
-     * @param $id
+     * @param string $name
      * @return TemplateInterface|null
      */
-    abstract protected function loadTemplate($id): ?TemplateInterface;
+    public function findTemplateWithName(string $name): ?TemplateInterface;
+
+    /**
+     * Returns first template found in category
+     *
+     * @param string $catalogName
+     * @return TemplateInterface|null
+     */
+    public function findTemplateInCatalog(string $catalogName): ?TemplateInterface;
+
+    /**
+     * Returns first template found with tags
+     *
+     * @param array $tags
+     * @return TemplateInterface|null
+     */
+    public function findTemplateWithTags(array $tags): ?TemplateInterface;
 }

@@ -35,9 +35,15 @@
 namespace Skyline\Render\Context;
 
 
+use Skyline\Render\AbstractRender;
+use Skyline\Render\Exception\TemplateNotFoundException;
 use Skyline\Render\Info\RenderInfoInterface;
 use Skyline\Render\Model\ModelInterface;
+use Skyline\Render\Service\AbstractTemplateController;
+use Skyline\Render\Service\OrganizedTemplateControllerInterface;
+use Skyline\Render\Service\TemplateControllerInterface;
 use Skyline\Render\Template\AbstractTemplate;
+use Skyline\Render\Template\TemplateInterface;
 use TASoft\Service\ServiceForwarderTrait;
 use TASoft\Service\ServiceManager;
 
@@ -122,5 +128,42 @@ class DefaultRenderContext implements RenderContextInterface
     public function setRenderInfo(RenderInfoInterface $renderInfo): void
     {
         $this->renderInfo = $renderInfo;
+    }
+
+    /**
+     * @param string|TemplateInterface|array $template
+     */
+    public function renderSubTemplate($template) {
+        $render = AbstractRender::getCurrentRender();
+        if(method_exists($render, 'renderTemplate')) {
+            $tmp = NULL;
+            /** @var TemplateControllerInterface $tc */
+            $tc = $this->templateController;
+
+            if(is_string($template)) {
+
+                if($templates = $this->getRenderInfo()->get( RenderInfoInterface::INFO_SUB_TEMPLATES )) {
+                    $tmp = $templates[$template];
+
+                    if(is_array($tmp))
+                        $template = $tmp;
+                }
+            }
+
+            if(is_array($template) && $tc instanceof OrganizedTemplateControllerInterface) {
+                $tmp = $tc->findTemplateWithTags($template);
+            }
+
+            if(is_string($template))
+                $tmp = $tc->getTemplate($tmp);
+
+            if(!($tmp instanceof TemplateInterface)) {
+                $e = new TemplateNotFoundException("Template not $tmp found");
+                $e->setTemplateID((string) $tmp);
+                throw $e;
+            }
+
+            $render->renderTemplate($tmp, $this->getRenderInfo());
+        }
     }
 }
