@@ -35,6 +35,7 @@
 namespace Skyline\Render\Plugin;
 
 
+use Skyline\Kernel\Exception\SkylineKernelDetailedException;
 use Skyline\Render\AbstractRender;
 use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Exception\TemplateNotFoundException;
@@ -63,11 +64,16 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
     public function __invoke(string $eventName, InternRenderEvent $event, AbstractRender $eventManager, ...$arguments)
     {
         $template = $event->getInfo()->get( RenderInfoInterface::INFO_TEMPLATE );
+        if(!$template) {
+            $e = new SkylineKernelDetailedException("No template specified for render");
+            $e->setDetails("Your action controller MUST specify either a response or a template to render.");
+            throw $e;
+        }
         $renderInfo = $event->getInfo();
 
-        static $beforeBody = NULL;
-        static $afterBody = NULL;
-        static $footer = NULL;
+        static $beforeBody = [];
+        static $afterBody = [];
+        static $footer = [];
 
         if($eventName == static::EVENT_HEADER_RENDER) {
             // Capture header event to get extensions (if available) that need to be rendered in header phase

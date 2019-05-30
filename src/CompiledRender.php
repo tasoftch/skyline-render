@@ -54,6 +54,8 @@ class CompiledRender extends AbstractConfiguredRender
      */
     public function getServiceManager(): ServiceManager
     {
+        if(!$this->serviceManager)
+            return ServiceManager::generalServiceManager();
         return $this->serviceManager;
     }
 
