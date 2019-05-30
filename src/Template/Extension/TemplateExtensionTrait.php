@@ -35,9 +35,35 @@
 namespace Skyline\Render\Template\Extension;
 
 
-use Skyline\Render\Template\AbstractTemplate;
-
-abstract class AbstractExtendableTemplate extends AbstractTemplate implements ExtendableTemplateInterface
+trait TemplateExtensionTrait
 {
-    use TemplateExtensionTrait;
+    protected $extensions = [];
+
+    /**
+     * @inheritDoc
+     */
+    public function getTemplateExtension(string $reuseIdentifier): ?TemplateExtensionInterface
+    {
+        return $this->extensions[$reuseIdentifier] ?? NULL;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getTemplateExtensions(): array
+    {
+        return array_unique($this->extensions, SORT_REGULAR);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function registerExtension(TemplateExtensionInterface $extension, string $reuseIdentifier = NULL): bool
+    {
+        if($reuseIdentifier)
+            $this->extensions[$reuseIdentifier] = $extension;
+        $this->extensions[$extension->getID()] = $extension;
+        $this->extensions[$extension->getName()] = $extension;
+        return true;
+    }
 }

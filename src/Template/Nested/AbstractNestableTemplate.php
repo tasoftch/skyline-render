@@ -36,29 +36,8 @@ namespace Skyline\Render\Template\Nested;
 
 
 use Skyline\Render\Template\AbstractTemplate;
-use Skyline\Render\Template\TemplateInterface;
 
 abstract class AbstractNestableTemplate extends AbstractTemplate implements NestableTemplateInterface
 {
-    protected $subTemplates = [];
-
-    /**
-     * @inheritDoc
-     */
-    public function getNestedTemplate(string $reuseIdentifier): ?TemplateInterface
-    {
-        return $this->subTemplates[$reuseIdentifier] ?? NULL;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function registerTemplate(TemplateInterface $template, string $reuseIdentifier = NULL): bool
-    {
-        if($reuseIdentifier)
-            $this->subTemplates[$reuseIdentifier] = $template;
-        $this->subTemplates[$template->getID()] = $template;
-        $this->subTemplates[$template->getName()] = $template;
-        return true;
-    }
+    use TemplateNestingTrait;
 }
