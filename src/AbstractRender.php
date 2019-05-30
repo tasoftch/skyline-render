@@ -142,8 +142,10 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
      * @return callable
      */
     public function modifyRenderable(callable $renderable): callable {
-        if($renderable instanceof Closure)
-            $renderable = $renderable->bindTo($this, static::class);
+        if($renderable instanceof Closure) {
+            $ctx = $this->getServiceManager()->get("renderContext");
+            $renderable = $renderable->bindTo($ctx, get_class($ctx));
+        }
         return $renderable;
     }
 
