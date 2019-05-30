@@ -109,7 +109,7 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
     /**
      * @param Response|null $response
      */
-    public function setResponse(?Response $response): void
+    public function setResponse(Response $response): void
     {
         $this->response = $response;
     }
