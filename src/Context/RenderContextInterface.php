@@ -32,53 +32,32 @@
  *
  */
 
-namespace Skyline\Render\Service;
+namespace Skyline\Render\Context;
 
-use Skyline\Render\CompiledRender;
-use Skyline\Render\Exception\RenderException;
-use Skyline\Render\RenderInterface;
 
-class CompiledRenderController implements RenderControllerInterface
+use Skyline\Render\Info\RenderInfoInterface;
+
+interface RenderContextInterface
 {
-    private $compiledRenderFilename;
-    private $compiledRenderInfo;
+    const VALUE_DEPTH_TEMPLATE = 1;
+    const VALUE_DEPTH_SUB_TEMPLATES = 2;
+    const VALUE_DEPTH_PARAMETERS = 4;
 
     /**
-     * CompiledRenderController constructor.
-     * @param $compiledRenderFilename
+     * Tries to find a value looking in a passed model, template attributes and if still not found in service manager's parameters.
+     *
+     * @param string $key
+     * @param mixed $default
+     * @param int $depth
+     * @return mixed|null
      */
-    public function __construct($compiledRenderFilename)
-    {
-        $this->compiledRenderFilename = $compiledRenderFilename;
-    }
+    public function getValue(string $key, $default = NULL, int $depth = NULL);
 
     /**
-     * @return mixed
+     * This method is called before rendering
+     *
+     * @param RenderInfoInterface $renderInfo
+     * @return void
      */
-    public function getCompiledRenderFilename()
-    {
-        return $this->compiledRenderFilename;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getRender(string $name): RenderInterface {
-        if(NULL === $this->compiledRenderInfo) {
-            $this->compiledRenderInfo = require getcwd() . DIRECTORY_SEPARATOR . $this->getCompiledRenderFilename();
-        }
-
-        if($renderInfo = $this->compiledRenderInfo[ $name ] ?? NULL) {
-            if($renderInfo instanceof RenderInterface)
-                return $renderInfo;
-
-            $rc = $renderInfo[ CompiledRender::CONFIG_RENDER_CLASS ] ?? NULL;
-            if(!$rc)
-                throw new RenderException("Configuration for render $name does not specify a render class name");
-
-            return $this->compiledRenderInfo[ $name ] = new $rc($renderInfo);
-        } else {
-            throw new RenderException("Could not find desired render $name");
-        }
-    }
+    public function setRenderInfo(RenderInfoInterface $renderInfo);
 }

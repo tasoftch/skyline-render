@@ -33,6 +33,7 @@
  */
 
 use Skyline\Kernel\Config\MainKernelConfig;
+use Skyline\Render\Context\DefaultRenderContext;
 use Skyline\Render\Service\CompiledRenderController;
 use TASoft\Service\Config\AbstractFileConfiguration;
 
@@ -43,6 +44,9 @@ return [
             AbstractFileConfiguration::SERVICE_INIT_ARGUMENTS => [
                 'renderFile' => '$(C)/render.config.php'
             ]
+        ],
+        "renderContext" => [
+            AbstractFileConfiguration::SERVICE_CLASS => DefaultRenderContext::class,
         ]
     ]
 ];

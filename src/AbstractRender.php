@@ -36,6 +36,7 @@ namespace Skyline\Render;
 
 
 use Closure;
+use Skyline\Render\Context\RenderContextInterface;
 use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Exception\RenderException;
 use Skyline\Render\Info\RenderInfoInterface;
@@ -121,6 +122,11 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
 
         self::$currentRender = $this;
 
+        $ctx = $this->getServiceManager()->get("renderContext");
+        if($ctx instanceof RenderContextInterface) {
+            $ctx->setRenderInfo($renderInfo);
+        }
+
         $this->trigger(static::EVENT_PRE_RENDER, $event);
         $this->trigger(static::EVENT_MAIN_RENDER, $event);
         $this->trigger(static::EVENT_POST_RENDER, $event);
@@ -181,6 +187,13 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
         $sm = $this->getServiceManager();
         /** @var AbstractTemplateController $dm */
         $dm = $sm->get("templateController");
+        return $dm;
+    }
+
+    public function getRenderController(): RenderInfoInterface {
+        $sm = $this->getServiceManager();
+        /** @var RenderInfoInterface $dm */
+        $dm = $sm->get("renderController");
         return $dm;
     }
 }

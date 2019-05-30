@@ -77,6 +77,7 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
                 $extLoader = function(ExtendableTemplateInterface $templateWithExtensions) use (&$extLoader, &$beforeBody, &$afterBody, &$footer, $eventManager, $renderInfo) {
 
                     if($templateWithExtensions instanceof ExtendableAwareTemplateInterface)
+                        $this->loadExtensionAwareTemplate($templateWithExtensions);
 
                     foreach ($templateWithExtensions->getTemplateExtensions() as $reuseIdentifier => $extension) {
                         if($extension instanceof TemplateExtensionInterface) {
