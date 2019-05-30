@@ -41,6 +41,7 @@ use TASoft\Service\ServiceManager;
 
 class CompiledRender extends AbstractConfiguredRender
 {
+    const CONFIG_RENDER_CLASS = 'class';
     const CONFIG_PLUGINS = 'plugins';
     const CONFIG_PLUGIN_CLASS = 'class';
     const CONFIG_PLUGIN_ARGUMENTS = 'arguments';

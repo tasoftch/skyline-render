@@ -35,6 +35,7 @@
 namespace Skyline\Render\Service;
 
 
+use Skyline\Render\CompiledRender;
 use Skyline\Render\Exception\RenderException;
 use Skyline\Render\RenderInterface;
 
@@ -65,10 +66,13 @@ class CompiledRenderController implements RenderControllerInterface
             $this->compiledRenderInfo = require getcwd() . DIRECTORY_SEPARATOR . $this->getCompiledRenderFilename();
         }
 
-        var_dump($name);
-
         if($renderInfo = $this->compiledRenderInfo[ $name ] ?? NULL) {
-            var_dump($this->compiledRenderInfo);
+            $rc = $renderInfo[ CompiledRender::class ] ?? NULL;
+            if(!$rc)
+                throw new RenderException("Configuration for render $name does not specify a render class name");
+
+
+
         } else {
             throw new RenderException("Could not find desired render $name");
         }

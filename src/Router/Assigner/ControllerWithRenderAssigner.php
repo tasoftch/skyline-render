@@ -69,7 +69,7 @@ class ControllerWithRenderAssigner implements PartialAssignerInterface
                 return $actionDescription->getRenderName() && $parts[0] && $actionDescription->getMethodName() ? true : false;
             }
         } elseif(is_array($information)) {
-            if(isset($information["render"]) && $actionDescription instanceof MutableRenderDescription || $actionDescription instanceof MutableRegexRenderActionDescription)
+            if(isset($information["render"]) && ($actionDescription instanceof MutableRenderDescription || $actionDescription instanceof MutableRegexRenderActionDescription))
                 $actionDescription->setRenderName( $information["render"] );
             if(isset($information["controller"]))
                 $actionDescription->setActionControllerClass( $information["controller"] );

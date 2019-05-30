@@ -39,6 +39,7 @@ use Skyline\Render\Plugin\RenderTemplateDefaultDispatchPlugin;
 
 return [
     CompiledRender::NULL_RENDER => [
+        CompiledRender::CONFIG_RENDER_CLASS => CompiledRender::class,
         CompiledRender::CONFIG_PLUGINS => [
             [
                 CompiledRender::CONFIG_PLUGIN_CLASS => NullPlugin::class
@@ -46,6 +47,7 @@ return [
         ]
     ],
     CompiledRender::INCREMENTIAL_TEMPLATE_RENDER => [
+        CompiledRender::CONFIG_RENDER_CLASS => CompiledRender::class,
         CompiledRender::CONFIG_PLUGINS => [
             [
                 CompiledRender::CONFIG_PLUGIN_CLASS => RenderTemplateDefaultDispatchPlugin::class
@@ -53,6 +55,7 @@ return [
         ]
     ],
     CompiledRender::ATOMIC_TEMPLATE_RENDER => [
+        CompiledRender::CONFIG_RENDER_CLASS => CompiledRender::class,
         CompiledRender::CONFIG_PLUGINS => [
             [
                 CompiledRender::CONFIG_PLUGIN_CLASS => CaptureContentsPlugin::class,
