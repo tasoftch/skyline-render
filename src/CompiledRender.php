@@ -85,9 +85,9 @@ class CompiledRender extends AbstractConfiguredRender
 
                 if($arguments) {
                     $arguments = $this->getServiceManager()->mapArray($arguments, true);
-                    $plugin = new $plugin( ...array_values($arguments) );
+                    $plugin = new $class( ...array_values($arguments) );
                 } else {
-                    $plugin = new $plugin();
+                    $plugin = new $class();
                 }
 
                 if($plugin instanceof RenderPluginInterface) {

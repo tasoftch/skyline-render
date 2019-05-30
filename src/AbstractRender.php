@@ -85,6 +85,8 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
      */
     public function getRequest(): Request
     {
+        if(!$this->request)
+            return $this->getServiceManager()->get("request");
         return $this->request;
     }
 
