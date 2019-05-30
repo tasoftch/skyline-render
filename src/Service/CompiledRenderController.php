@@ -34,7 +34,6 @@
 
 namespace Skyline\Render\Service;
 
-
 use Skyline\Render\CompiledRender;
 use Skyline\Render\Exception\RenderException;
 use Skyline\Render\RenderInterface;
@@ -67,12 +66,14 @@ class CompiledRenderController implements RenderControllerInterface
         }
 
         if($renderInfo = $this->compiledRenderInfo[ $name ] ?? NULL) {
-            $rc = $renderInfo[ CompiledRender::class ] ?? NULL;
+            if($renderInfo instanceof RenderInterface)
+                return $renderInfo;
+
+            $rc = $renderInfo[ CompiledRender::CONFIG_RENDER_CLASS ] ?? NULL;
             if(!$rc)
                 throw new RenderException("Configuration for render $name does not specify a render class name");
 
-
-
+            return $this->compiledRenderInfo[ $name ] = new $rc($renderInfo);
         } else {
             throw new RenderException("Could not find desired render $name");
         }
