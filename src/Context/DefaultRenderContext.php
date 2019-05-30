@@ -39,7 +39,6 @@ use Skyline\Render\AbstractRender;
 use Skyline\Render\Exception\TemplateNotFoundException;
 use Skyline\Render\Info\RenderInfoInterface;
 use Skyline\Render\Model\ModelInterface;
-use Skyline\Render\Service\AbstractTemplateController;
 use Skyline\Render\Service\OrganizedTemplateControllerInterface;
 use Skyline\Render\Service\TemplateControllerInterface;
 use Skyline\Render\Template\AbstractTemplate;
