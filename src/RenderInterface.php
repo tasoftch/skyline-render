@@ -56,5 +56,5 @@ interface RenderInterface
     /**
      * @return Response
      */
-    public function getResponse(): Response;
+    public function getResponse(): ?Response;
 }
