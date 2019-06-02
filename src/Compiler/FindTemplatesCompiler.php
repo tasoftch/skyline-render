@@ -36,17 +36,88 @@ namespace Skyline\Render\Compiler;
 
 
 use Skyline\Compiler\AbstractCompiler;
+use Skyline\Compiler\CompilerConfiguration;
 use Skyline\Compiler\CompilerContext;
+use Skyline\Compiler\Context\Code\SourceFile;
 use Skyline\Compiler\Project\Attribute\SearchPathAttribute;
+use Skyline\Render\Compiler\Template\MutableTemplate;
+use Skyline\Render\Template\Loader\LoaderInterface;
+use Skyline\Render\Template\Loader\TemplateFileLoader;
 
 class FindTemplatesCompiler extends AbstractCompiler
 {
+    /**
+     * @inheritDoc
+     */
     public function compile(CompilerContext $context)
     {
         $spt = $context->getProjectSearchPaths(SearchPathAttribute::SEARCH_PATH_TEMPLATES);
 
-        foreach($context->getSourceCodeManager()->yieldSourceFiles("/\.temp\.php$/i", $spt) as $template) {
-            print_r($template);
+        $templates = [];
+
+        /** @var SourceFile $sourceFile */
+        $scm = $context->getSourceCodeManager();
+        $scm->setRespectPackageOrder(true);
+
+        foreach($scm->yieldSourceFiles($this->getTemplateFilenamePattern(), $spt) as $sourceFile) {
+            $loader = $this->getLoaderForFile($sourceFile);
+            $template = $loader->loadTemplate();
+            $template = $this->adjustLoadedTemplate($template, $sourceFile);
+
+            $templates["files"][] = $ref = $context->useZeroLinks() ? $sourceFile->getRealPath() : $sourceFile->getPathName();
+            $idx = array_search($ref, $templates["files"]);
+
+            $name = $template->getName();
+            if(!$name)
+                trigger_error("Template $sourceFile does not provide a name", E_USER_WARNING);
+            else
+                $templates["names"][$name][] = $idx;
+
+            if($catalog = $template->getCatalogName()) {
+                $templates["catalog"][$catalog][] = $idx;
+            }
+
+            if($tags = $template->getTags()) {
+                foreach($tags as $tag)
+                    $templates["tags"][$tag][] = $idx;
+            }
+
+            $templates["data"][$idx] = $template->getSerializedTemplate();
         }
+        $scm->setRespectPackageOrder(false);
+
+        $data = var_export($templates, true);
+        $fn = $context->getSkylineAppDirectory(CompilerConfiguration::SKYLINE_DIR_COMPILED) . DIRECTORY_SEPARATOR . "templates.config.php";
+        file_put_contents($fn, "<?php\nreturn $data;");
+    }
+
+    /**
+     * Creates a loader to load specified template from source file
+     *
+     * @param SourceFile $sourceFile
+     * @return LoaderInterface
+     */
+    protected function getLoaderForFile(SourceFile $sourceFile): LoaderInterface {
+        return new TemplateFileLoader($sourceFile->getPathName());
+    }
+
+    /**
+     * After loading, adjust the template if needed
+     *
+     * @param MutableTemplate $template
+     * @param SourceFile $sourceFile
+     * @return MutableTemplate
+     */
+    protected function adjustLoadedTemplate(MutableTemplate $template, SourceFile $sourceFile): MutableTemplate {
+        return $template;
+    }
+
+    /**
+     * Returns a regex template match string
+     *
+     * @return string
+     */
+    protected function getTemplateFilenamePattern(): string {
+        return "/\.temp\.php$/i";
     }
 }
