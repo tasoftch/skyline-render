@@ -35,6 +35,7 @@
 use Skyline\Kernel\Config\MainKernelConfig;
 use Skyline\Render\Context\DefaultRenderContext;
 use Skyline\Render\Service\CompiledRenderController;
+use Skyline\Render\Service\CompiledTemplateController;
 use TASoft\Service\Config\AbstractFileConfiguration;
 
 return [
@@ -47,6 +48,12 @@ return [
         ],
         "renderContext" => [
             AbstractFileConfiguration::SERVICE_CLASS => DefaultRenderContext::class,
+        ],
+        "templateController" => [
+            AbstractFileConfiguration::SERVICE_CLASS => CompiledTemplateController::class,
+            AbstractFileConfiguration::SERVICE_INIT_ARGUMENTS => [
+                'templateFile' => '$(C)/templates.config.php'
+            ]
         ]
     ]
 ];
