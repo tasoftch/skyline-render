@@ -49,7 +49,7 @@ abstract class AbstractOrganizedTemplateController extends AbstractTemplateContr
     public function findTemplatesWithName(string $name): array {
         $temps = [];
         foreach($this->yieldIDsWithName($name) as $t)
-            $temps[] = $this->getTemplate($t);
+            $temps[$t] = $this->getTemplate($t);
         return $temps;
     }
 
@@ -62,7 +62,7 @@ abstract class AbstractOrganizedTemplateController extends AbstractTemplateContr
     public function findTemplatesInCatalog(string $catalogName): array {
         $temps = [];
         foreach($this->yieldIDsInCatalog($catalogName) as $t)
-            $temps[] = $this->getTemplate($t);
+            $temps[$t] = $this->getTemplate($t);
         return $temps;
     }
 
@@ -73,10 +73,10 @@ abstract class AbstractOrganizedTemplateController extends AbstractTemplateContr
      * @param bool $all
      * @return array
      */
-    public function findTemplatesWithTags(array $tags, bool $all = true): array {
+    public function findTemplatesWithTags(array $tags, bool $all = false): array {
         $temps = [];
         foreach($this->yieldIDsWithTags($tags, $all) as $t)
-            $temps[] = $this->getTemplate($t);
+            $temps[$t] = $this->getTemplate($t);
         return $temps;
     }
 

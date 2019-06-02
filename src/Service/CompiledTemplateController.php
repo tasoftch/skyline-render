@@ -44,11 +44,11 @@ class CompiledTemplateController extends AbstractOrganizedTemplateController
 
     /**
      * CompiledTemplateController constructor.
-     * @param string $templateFile
+     * @param string|array $templateFile
      */
-    public function __construct(string $templateFile)
+    public function __construct($templateFile)
     {
-        $this->templateMeta = require $templateFile;
+        $this->templateMeta = is_array($templateFile) ? $templateFile : require $templateFile;
     }
 
     /**
@@ -76,9 +76,9 @@ class CompiledTemplateController extends AbstractOrganizedTemplateController
     /**
      * @inheritDoc
      */
-    protected function yieldIDsWithTags(array $tags, bool $all = true): Generator
+    protected function yieldIDsWithTags(array $tags, bool $all = false): Generator
     {
-        $selection = $all ? array_values($this->templateMeta["files"]) : [];
+        $selection = $all ? array_keys($this->templateMeta["files"]) : [];
 
         foreach($tags as $tag) {
             $tmpl = $this->templateMeta["tags"][$tag] ?? [];
@@ -87,11 +87,18 @@ class CompiledTemplateController extends AbstractOrganizedTemplateController
                 if(!$selection)
                     return;
             } else {
-                $selection = array_unique( array_merge($selection, $tmpl));
+                foreach($tmpl as $t) {
+                    if(!in_array($t, $selection)) {
+                        yield $this->_getTemplateID($t);
+                        $selection[] = $t;
+                    }
+                }
             }
         }
-        foreach($selection as $idx)
-            yield $this->_getTemplateID($idx);
+        if($all) {
+            foreach($selection as $idx)
+                yield $this->_getTemplateID($idx);
+        }
     }
 
     private function _getTemplateID(int $index): string {
