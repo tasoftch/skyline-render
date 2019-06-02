@@ -154,7 +154,7 @@ class DefaultRenderContext implements RenderContextInterface
             }
 
             if(is_string($template))
-                $tmp = $tc->getTemplate($tmp);
+                $tmp = $tc->getTemplate($template);
 
             if(!($tmp instanceof TemplateInterface)) {
                 $e = new TemplateNotFoundException("Template not $tmp found");

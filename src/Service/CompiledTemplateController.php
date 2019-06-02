@@ -95,7 +95,7 @@ class CompiledTemplateController extends AbstractOrganizedTemplateController
     }
 
     private function _getTemplateID(int $index): string {
-        return $index;
+        return $this->templateMeta["files"][$index] ?? "";
     }
 
     /**
@@ -103,6 +103,13 @@ class CompiledTemplateController extends AbstractOrganizedTemplateController
      */
     protected function loadTemplate($id): ?TemplateInterface
     {
+        if(!is_numeric($id)) {
+            $idx = array_search($id, $this->templateMeta["files"]);
+            if($idx === false)
+                return NULL;
+            $id = $idx;
+        }
+
         if(isset($this->templateMeta["data"][$id])) {
             $tmp = $this->templateMeta["data"][$id];
             if(!($tmp instanceof TemplateInterface)) {
