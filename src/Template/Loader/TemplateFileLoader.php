@@ -50,12 +50,12 @@ class TemplateFileLoader extends AbstractTemplateClassLoader
 
     /**
      * TemplateFileLoader constructor.
-     * @param string $templateClass
+     * @param string|object<string> $templateClass
      * @param string $filename
      */
-    public function __construct(string $filename, string $templateClass = FileTemplate::class)
+    public function __construct($filename, string $templateClass = FileTemplate::class)
     {
-        parent::__construct($templateClass, $filename);
+        parent::__construct($templateClass, (string)$filename);
     }
 
     /**
