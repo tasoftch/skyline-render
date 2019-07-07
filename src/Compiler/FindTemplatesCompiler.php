@@ -53,7 +53,11 @@ class FindTemplatesCompiler extends AbstractCompiler
     {
         $spt = $context->getProjectSearchPaths(SearchPathAttribute::SEARCH_PATH_TEMPLATES);
 
-        $templates = [];
+        $fn = $context->getSkylineAppDirectory(CompilerConfiguration::SKYLINE_DIR_COMPILED) . DIRECTORY_SEPARATOR . "templates.config.php";
+        if(file_exists($fn)) {
+            $templates = require $fn;
+        } else
+            $templates = [];
 
         /** @var SourceFile $sourceFile */
         $scm = $context->getSourceCodeManager();
@@ -87,7 +91,6 @@ class FindTemplatesCompiler extends AbstractCompiler
         $scm->setRespectPackageOrder(false);
 
         $data = var_export($templates, true);
-        $fn = $context->getSkylineAppDirectory(CompilerConfiguration::SKYLINE_DIR_COMPILED) . DIRECTORY_SEPARATOR . "templates.config.php";
         file_put_contents($fn, "<?php\nreturn $data;");
     }
 

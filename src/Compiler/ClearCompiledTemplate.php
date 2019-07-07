@@ -32,30 +32,19 @@
  *
  */
 
-use Skyline\Compiler\Factory\AbstractExtendedCompilerFactory;
-use Skyline\Compiler\Predef\ConfigurationCompiler;
-use Skyline\Compiler\Predef\OrderedConfigurationCompiler;
-use Skyline\Render\Compiler\ClearCompiledTemplate;
-use Skyline\Render\Compiler\FindTemplatesCompiler;
+namespace Skyline\Render\Compiler;
 
-return [
-    'render-config' => [
-        AbstractExtendedCompilerFactory::COMPILER_CLASS_KEY                            => OrderedConfigurationCompiler::class,
-        ConfigurationCompiler::INFO_TARGET_FILENAME_KEY     => 'render.config.php',
-        ConfigurationCompiler::INFO_PATTERN_KEY             => '/^render\.cfg\.php$/i',
-        ConfigurationCompiler::INFO_CUSTOM_FILENAME_KEY     => 'render.config.php',
-        AbstractExtendedCompilerFactory::COMPILER_DEPENDENCIES_KEY => [
-            'composer-packages-order'
-        ]
-    ],
-    "find-templates" => [
-        AbstractExtendedCompilerFactory::COMPILER_CLASS_KEY => FindTemplatesCompiler::class,
-        AbstractExtendedCompilerFactory::COMPILER_DEPENDENCIES_KEY => [
-            'render-config',
-            "clear-templates"
-        ]
-    ],
-    "clear-templates" => [
-        AbstractExtendedCompilerFactory::COMPILER_CLASS_KEY => ClearCompiledTemplate::class
-    ]
-];
+
+use Skyline\Compiler\AbstractCompiler;
+use Skyline\Compiler\CompilerConfiguration;
+use Skyline\Compiler\CompilerContext;
+
+class ClearCompiledTemplate extends AbstractCompiler
+{
+    public function compile(CompilerContext $context)
+    {
+        $fn = $context->getSkylineAppDirectory(CompilerConfiguration::SKYLINE_DIR_COMPILED) . DIRECTORY_SEPARATOR . "templates.config.php";
+        if(file_exists($fn))
+            unlink($fn);
+    }
+}
