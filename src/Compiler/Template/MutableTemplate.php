@@ -216,4 +216,22 @@ class MutableTemplate implements TemplateInterface, Serializable
     {
         // Can not unserialize!
     }
+
+    /**
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return $this->className;
+    }
+
+    /**
+     * Specifies which class the final template should have.
+     *
+     * @param string $className
+     */
+    public function setTemplateClassName(string $className) {
+        $this->className = $className;
+        $this->_template = NULL;
+    }
 }
