@@ -53,4 +53,11 @@ interface NestableTemplateInterface extends TemplateInterface
      * @return bool
      */
     public function registerTemplate(TemplateInterface $template, string $reuseIdentifier = NULL): bool;
+
+    /**
+     * Get all nested templates
+     *
+     * @return array
+     */
+    public function getNestedTemplates(): array;
 }

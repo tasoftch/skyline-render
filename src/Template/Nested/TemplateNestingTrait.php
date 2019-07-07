@@ -60,4 +60,11 @@ trait TemplateNestingTrait
         $this->subTemplates[$template->getName()] = $template;
         return true;
     }
+
+    /**
+     * @inheritDoc
+     */
+    public function getNestedTemplates(): array {
+        return $this->subTemplates;
+    }
 }
