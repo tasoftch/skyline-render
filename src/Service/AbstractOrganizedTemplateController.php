@@ -36,6 +36,7 @@ namespace Skyline\Render\Service;
 
 
 use Generator;
+use Skyline\Render\Template\Catalog;
 use Skyline\Render\Template\TemplateInterface;
 
 abstract class AbstractOrganizedTemplateController extends AbstractTemplateController implements OrganizedTemplateControllerInterface
@@ -120,6 +121,42 @@ abstract class AbstractOrganizedTemplateController extends AbstractTemplateContr
                 return $t;
         }
         return NULL;
+    }
+
+    /**
+     * @param array|Catalog|string $info
+     * @return TemplateInterface|null
+     */
+    public function findTemplate($info): ?TemplateInterface
+    {
+        if(is_array($info)) {
+            $template = $this->findTemplateWithTags($info);
+        } elseif ($info instanceof Catalog) {
+            $template = $this->findTemplateInCatalog((string) $info);
+        } else {
+            $template = $this->findTemplateWithName($info);
+            if(!$template)
+                $template = $this->getTemplate($info);
+        }
+        return $template;
+    }
+
+    /**
+     * @param array|Catalog|string $info
+     * @return array
+     */
+    public function findTemplates($info): array
+    {
+        if(is_array($info)) {
+            $template = $this->findTemplatesWithTags($info);
+        } elseif ($info instanceof Catalog) {
+            $template = $this->findTemplatesInCatalog((string) $info);
+        } else {
+            $template = $this->findTemplatesWithName($info);
+            if(!$template)
+                $template = ($tmp = $this->getTemplate($info)) ? [$tmp] : [];
+        }
+        return $template;
     }
 
     // Template ID providers

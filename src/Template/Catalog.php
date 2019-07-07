@@ -32,35 +32,33 @@
  *
  */
 
-namespace Skyline\Render\Service;
+namespace Skyline\Render\Template;
 
 
-use Skyline\Render\Template\Catalog;
-use Skyline\Render\Template\TemplateInterface;
-
-interface TemplateControllerInterface
+class Catalog
 {
-    /**
-     * Returns a template if exist or null
-     *
-     * @param $templateID
-     * @return TemplateInterface|null
-     */
-    public function getTemplate($templateID): ?TemplateInterface;
+    /** @var string */
+    private $name;
 
     /**
-     * This method tries to find a template matching the passed info.
-     *
-     * @param $info
-     * @return TemplateInterface|null
+     * Catalog constructor.
+     * @param string $name
      */
-    public function findTemplate($info): ?TemplateInterface;
+    public function __construct(string $name)
+    {
+        $this->name = $name;
+    }
 
     /**
-     * Same as findTemplate but will return all found templates.
-     *
-     * @param $info
-     * @return array
+     * @return string
      */
-    public function findTemplates($info): array;
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    public function __toString()
+    {
+        return $this->getName();
+    }
 }
