@@ -78,7 +78,7 @@ class FindTemplatesCompiler extends AbstractCompiler
                 $templates["names"][$name][] = $idx;
 
             if($catalog = $template->getCatalogName()) {
-                $templates["catalog"][$catalog][] = $idx;
+                $templates["catalog"][$catalog][$name][] = $idx;
             }
 
             if($tags = $template->getTags()) {
