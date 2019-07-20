@@ -167,7 +167,7 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
                     'renderInfo' => $renderInfo,
                     "template" => $template
                 ]));
-                $dm->call($cb);
+                echo $dm->call($cb);
             });
         }
     }
