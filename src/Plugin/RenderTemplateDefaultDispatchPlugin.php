@@ -58,7 +58,9 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
     public function initialize(EventManagerInterface $eventManager)
     {
         parent::initialize($eventManager);
+        $eventManager->addListener(static::EVENT_HEADER_RENDER, $this, 100);
         $eventManager->addListener(static::EVENT_BODY_RENDER, $this, 100);
+        $eventManager->addListener(static::EVENT_FOOTER_RENDER, $this, 100);
     }
 
     public function __invoke(string $eventName, InternRenderEvent $event, AbstractRender $eventManager, ...$arguments)
