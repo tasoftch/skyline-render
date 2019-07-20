@@ -41,6 +41,7 @@ use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Exception\RenderException;
 use Skyline\Render\Info\RenderInfoInterface;
 use Skyline\Render\Service\AbstractTemplateController;
+use Skyline\Render\Template\Extension\TemplateExtensionInterface;
 use Skyline\Render\Template\TemplateInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -140,10 +141,14 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
     /**
      * Called from plugins that handle renderable templates.
      *
-     * @param callable $renderable
+     * @param TemplateInterface $template
      * @return callable
      */
-    public function modifyRenderable(callable $renderable): callable {
+    public function modifyRenderable(TemplateInterface $template): callable {
+        $renderable = $template->getRenderable();
+        if($template instanceof TemplateExtensionInterface)
+            return $renderable;
+
         if($renderable instanceof Closure) {
             $ctx = $this->getServiceManager()->get("renderContext");
             $renderable = $renderable->bindTo($ctx, get_class($ctx));
@@ -160,7 +165,7 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
     public function renderTemplate(TemplateInterface $template, RenderInfoInterface $renderInfo = NULL) {
         if($template instanceof TemplateInterface) {
             $dm = $this->getDependencyManager();
-            $cb = $this->modifyRenderable( $template->getRenderable() );
+            $cb = $this->modifyRenderable( $template );
 
             $dm->pushGroup(function() use ($renderInfo, $cb, $dm, $template) {
                 $dm->addDependencyInjector(new ObjectListInjector([
