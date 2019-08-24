@@ -68,8 +68,8 @@ class CompiledTemplateController extends AbstractOrganizedTemplateController
     protected function yieldIDsInCatalog(string $name): Generator
     {
         if($names = $this->templateMeta["catalog"][$name] ?? NULL) {
-            foreach($names as $idx)
-                yield $this->_getTemplateID($idx);
+            foreach($names as $id => $idx)
+                yield $this->_getTemplateID($id);
         }
     }
 
