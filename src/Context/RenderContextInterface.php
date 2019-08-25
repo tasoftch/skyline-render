@@ -60,4 +60,11 @@ interface RenderContextInterface
      * @return void
      */
     public function setRenderInfo(RenderInfoInterface $renderInfo);
+
+    /**
+     * This method must return the current render info
+     *
+     * @return RenderInfoInterface
+     */
+    public function getRenderInfo(): RenderInfoInterface;
 }

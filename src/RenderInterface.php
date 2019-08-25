@@ -36,6 +36,7 @@ namespace Skyline\Render;
 
 
 use Skyline\Render\Info\RenderInfoInterface;
+use Skyline\Render\Template\TemplateInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 interface RenderInterface
@@ -43,15 +44,6 @@ interface RenderInterface
     const NULL_RENDER = 'null-render';
     const INCREMENTIAL_TEMPLATE_RENDER = 'incremential-t-render';
     const ATOMIC_TEMPLATE_RENDER = 'atomic-t-render';
-
-
-    /**
-     * Render the information into a response
-     *
-     * @param RenderInfoInterface $renderInfo
-     * @return void
-     */
-    public function render(RenderInfoInterface $renderInfo);
 
     /**
      * @return Response
@@ -64,4 +56,21 @@ interface RenderInterface
      * @param Response $response
      */
     public function setResponse(Response $response):void;
+
+    /**
+     * This method must transform any render information into a response.
+     *
+     * @param RenderInfoInterface $renderInfo
+     * @return void
+     */
+    public function render(RenderInfoInterface $renderInfo);
+
+    /**
+     * This method should be called inside templates to render further templates.
+     * Using additional info you may pass specific infos into the render cycle.
+     *
+     * @param TemplateInterface $template
+     * @param mixed $additionalInfo
+     */
+    public function renderTemplate(TemplateInterface $template, $additionalInfo = NULL);
 }

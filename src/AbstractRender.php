@@ -157,23 +157,35 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
     }
 
     /**
-     * This method should render a template without care about extensions and nestings.
-     *
-     * @param TemplateInterface $template
-     * @param RenderInfoInterface|null $renderInfo
+     * @inheritDoc
      */
-    public function renderTemplate(TemplateInterface $template, RenderInfoInterface $renderInfo = NULL) {
-        if($template instanceof TemplateInterface) {
-            $dm = $this->getDependencyManager();
-            $cb = $this->modifyRenderable( $template );
+    public function renderTemplate(TemplateInterface $template, $additionalInfo = NULL)
+    {
+        $dm = $this->getDependencyManager();
+        $cb = $this->modifyRenderable( $template );
 
-            $dm->pushGroup(function() use ($renderInfo, $cb, $dm, $template) {
-                $dm->addDependencyInjector(new ObjectListInjector([
-                    'renderInfo' => $renderInfo,
-                    "template" => $template
-                ]));
-                echo $dm->call($cb);
-            });
+        $renderInfo = NULL;
+        $ctx = $this->getServiceManager()->get("renderContext");
+
+        static $renderAdditionalInfos = [];
+        $renderAdditionalInfos[] = $additionalInfo;
+
+        if($ctx instanceof RenderContextInterface) {
+            $renderInfo = $ctx->getRenderInfo();
+            $renderInfo->set(RenderInfoInterface::INFO_ADDITIONAL_INFO, $additionalInfo);
+        }
+
+        $dm->pushGroup(function() use ($cb, $dm, $template) {
+            $dm->addDependencyInjector(new ObjectListInjector([
+                "template" => $template
+            ]));
+            echo $dm->call($cb);
+        });
+
+        array_pop($renderAdditionalInfos);
+
+        if(isset($renderInfo)) {
+            $renderInfo->set(RenderInfoInterface::INFO_ADDITIONAL_INFO, end($renderAdditionalInfos));
         }
     }
 

@@ -43,6 +43,8 @@ interface RenderInfoInterface
     const INFO_SUB_TEMPLATES = 'subTemplates';
     const INFO_PREFERRED_RENDER = "render";
 
+    const INFO_ADDITIONAL_INFO = 'additionalInfo';
+
     /**
      * Returns a value for the required information
      *
