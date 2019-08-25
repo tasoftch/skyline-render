@@ -130,9 +130,12 @@ class DefaultRenderContext implements RenderContextInterface
     }
 
     /**
+     * Renders a subtemplate
+     *
      * @param string|TemplateInterface|array $template
+     * @param mixed $additionalInfo
      */
-    public function renderSubTemplate($template) {
+    public function renderSubTemplate($template, $additionalInfo = NULL) {
         $render = AbstractRender::getCurrentRender();
         if(method_exists($render, 'renderTemplate')) {
             $tmp = NULL;
@@ -166,7 +169,7 @@ class DefaultRenderContext implements RenderContextInterface
                 throw $e;
             }
 
-            $render->renderTemplate($tmp, $this->getRenderInfo());
+            $render->renderTemplate($tmp, $additionalInfo);
         }
     }
 }
