@@ -176,4 +176,13 @@ class DefaultRenderContext implements RenderContextInterface
             $render->renderTemplate($tmp, $additionalInfo);
         }
     }
+
+    /**
+     * Access to direct information on render info
+     *
+     * @return mixed|null
+     */
+    public function getAdditionalInfo() {
+        return $this->getRenderInfo()->get( RenderInfoInterface::INFO_ADDITIONAL_INFO );
+    }
 }
