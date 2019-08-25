@@ -139,28 +139,32 @@ class DefaultRenderContext implements RenderContextInterface
         $render = AbstractRender::getCurrentRender();
         if(method_exists($render, 'renderTemplate')) {
             $tmp = NULL;
-            /** @var TemplateControllerInterface $tc */
-            $tc = $this->templateController;
+            if($template instanceof TemplateInterface)
+                $tmp = $template;
+            else {
+                /** @var TemplateControllerInterface $tc */
+                $tc = $this->templateController;
 
-            if(is_string($template)) {
+                if(is_string($template)) {
 
-                if($templates = $this->getRenderInfo()->get( RenderInfoInterface::INFO_SUB_TEMPLATES )) {
-                    $tmp = $templates[$template];
+                    if($templates = $this->getRenderInfo()->get( RenderInfoInterface::INFO_SUB_TEMPLATES )) {
+                        $tmp = $templates[$template];
 
-                    if(is_array($tmp) || $tmp instanceof TemplateInterface)
-                        $template = $tmp;
+                        if(is_array($tmp) || $tmp instanceof TemplateInterface)
+                            $template = $tmp;
+                    }
                 }
-            }
 
-            if(is_array($template) && $tc instanceof OrganizedTemplateControllerInterface) {
-                $tmp = $tc->findTemplateWithTags($template);
-            }
+                if(is_array($template) && $tc instanceof OrganizedTemplateControllerInterface) {
+                    $tmp = $tc->findTemplateWithTags($template);
+                }
 
-            if(is_string($template)) {
-                if($tc instanceof OrganizedTemplateControllerInterface)
-                    $tmp = $tc->findTemplateWithName($template);
-                else
-                    $tmp = $tc->getTemplate($template);
+                if(is_string($template)) {
+                    if($tc instanceof OrganizedTemplateControllerInterface)
+                        $tmp = $tc->findTemplateWithName($template);
+                    else
+                        $tmp = $tc->getTemplate($template);
+                }
             }
 
             if(!($tmp instanceof TemplateInterface)) {
