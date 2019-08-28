@@ -129,7 +129,9 @@ abstract class AbstractOrganizedTemplateController extends AbstractTemplateContr
      */
     public function findTemplate($info): ?TemplateInterface
     {
-        if(is_array($info)) {
+        if($info instanceof TemplateInterface)
+            $template = $info;
+        elseif(is_array($info)) {
             $template = $this->findTemplateWithTags($info);
         } elseif ($info instanceof Catalog) {
             $template = $this->findTemplateInCatalog((string) $info);
