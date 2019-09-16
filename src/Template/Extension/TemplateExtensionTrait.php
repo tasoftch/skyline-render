@@ -62,8 +62,6 @@ trait TemplateExtensionTrait
     {
         if($reuseIdentifier)
             $this->extensions[$reuseIdentifier] = $extension;
-        $this->extensions[$extension->getID()] = $extension;
-        $this->extensions[$extension->getName()] = $extension;
         return true;
     }
 }
