@@ -41,6 +41,7 @@ use Skyline\Render\Event\InternRenderEvent;
 use Skyline\Render\Exception\RenderException;
 use Skyline\Render\Info\RenderInfoInterface;
 use Skyline\Render\Service\AbstractTemplateController;
+use Skyline\Render\Template\ContextControlInterface;
 use Skyline\Render\Template\Extension\TemplateExtensionInterface;
 use Skyline\Render\Template\TemplateInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -146,11 +147,12 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
      */
     public function modifyRenderable(TemplateInterface $template): callable {
         $renderable = $template->getRenderable();
-        if($template instanceof TemplateExtensionInterface)
+        $ctx = $this->getServiceManager()->get("renderContext");
+
+        if($template instanceof TemplateExtensionInterface || (($template instanceof ContextControlInterface) && !$template->shouldBindToContext($ctx)))
             return $renderable;
 
         if($renderable instanceof Closure) {
-            $ctx = $this->getServiceManager()->get("renderContext");
             $renderable = $renderable->bindTo($ctx, get_class($ctx));
         }
         return $renderable;
