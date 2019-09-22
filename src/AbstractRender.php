@@ -161,7 +161,6 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
      */
     public function renderTemplate(TemplateInterface $template, $additionalInfo = NULL)
     {
-        $dm = $this->getDependencyManager();
         $cb = $this->modifyRenderable( $template );
 
         $renderInfo = NULL;
@@ -175,12 +174,7 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
             $renderInfo->set(RenderInfoInterface::INFO_ADDITIONAL_INFO, $additionalInfo);
         }
 
-        $dm->pushGroup(function() use ($cb, $dm, $template) {
-            $dm->addDependencyInjector(new ObjectListInjector([
-                "template" => $template
-            ]));
-            echo $dm->call($cb);
-        });
+        echo call_user_func($cb, $additionalInfo);
 
         array_pop($renderAdditionalInfos);
 
