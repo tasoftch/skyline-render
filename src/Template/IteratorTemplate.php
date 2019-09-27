@@ -69,7 +69,7 @@ class IteratorTemplate implements TemplateInterface, ContextControlInterface
     public function getRenderable(): callable
     {
         $self = $this;
-        return function($info) use ($self) {
+        return function($info = NULL) use ($self) {
             $contents = "";
             $cb = $self->getTemplate()->getRenderable();
             if($cb instanceof \Closure)
