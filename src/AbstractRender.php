@@ -150,10 +150,10 @@ abstract class AbstractRender implements RenderInterface, EventManagerInterface
         $ctx = $this->getServiceManager()->get("renderContext");
         $bc = $ctx;
 
-        if($template instanceof _InternalBoundModelTemplate) {
+        if($boundTemplate = _InternalBoundModelTemplate::$current) {
             $realTemplate = NULL;
-            (function() use (&$realTemplate){$realTemplate = $this->template;})->bindTo($template, get_class($template))();
-            $bc = (function(){return$this->model;})->bindTo($template, get_class($template))();
+            (function() use (&$realTemplate){$realTemplate = $this->template;})->bindTo($boundTemplate, get_class($boundTemplate))();
+            $bc = (function(){return$this->model;})->bindTo($boundTemplate, get_class($boundTemplate))();
             $template = $realTemplate;
         }
         $renderable = $template->getRenderable();

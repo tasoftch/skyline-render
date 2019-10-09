@@ -144,7 +144,8 @@ class DefaultRenderContext implements RenderContextInterface
             $tmp = NULL;
 
             if($template instanceof BoundTemplateModelInterface) {
-                $template = new _InternalBoundModelTemplate($template, $tmp);
+                _InternalBoundModelTemplate::$current = new _InternalBoundModelTemplate($template, $tmp);
+                $template = $template->getTemplate();
             }
 
             if($template instanceof TemplateInterface || $template instanceof RenderableInterface)
@@ -156,7 +157,7 @@ class DefaultRenderContext implements RenderContextInterface
                 if(is_string($template)) {
 
                     if($templates = $this->getRenderInfo()->get( RenderInfoInterface::INFO_SUB_TEMPLATES )) {
-                        $tmp = $templates[$template];
+                        $tmp = $templates[$template] ?? NULL;
 
                         if(is_array($tmp) || $tmp instanceof TemplateInterface)
                             $template = $tmp;
@@ -187,6 +188,7 @@ class DefaultRenderContext implements RenderContextInterface
             }
 
             $render->renderTemplate($tmp, $additionalInfo);
+            _InternalBoundModelTemplate::$current = NULL;
         }
     }
 

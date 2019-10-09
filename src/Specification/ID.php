@@ -32,45 +32,33 @@
  *
  */
 
-namespace Skyline\Render\Template;
+namespace Skyline\Render\Specification;
 
 
-use Skyline\Render\Model\BoundTemplateModelInterface;
-
-class _InternalBoundModelTemplate implements TemplateInterface
+class ID
 {
-    /** @var BoundTemplateModelInterface */
-    private $model;
-    /** @var TemplateInterface */
-    private $template;
-
-    /** @var _InternalBoundModelTemplate */
-    public static $current;
+    /** @var string */
+    private $id;
 
     /**
-     * _InternalBoundModelTemplate constructor.
-     * @param BoundTemplateModelInterface $model
+     * ID constructor.
+     * @param string $id
      */
-    public function __construct(BoundTemplateModelInterface $model, &$template)
+    public function __construct(string $id)
     {
-        $this->model = $model;
-        $this->template = &$template;
+        $this->id = $id;
     }
 
-
-    // Not used
-    public function getID()
+    /**
+     * @return string
+     */
+    public function getId(): string
     {
-        return "";
+        return $this->id;
     }
 
-    public function getName(): string
+    public function __toString()
     {
-        return "";
-    }
-
-    public function getRenderable(): callable
-    {
-        return function(){};
+        return $this->getId();
     }
 }

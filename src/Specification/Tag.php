@@ -32,45 +32,34 @@
  *
  */
 
-namespace Skyline\Render\Template;
+namespace Skyline\Render\Specification;
 
 
-use Skyline\Render\Model\BoundTemplateModelInterface;
-
-class _InternalBoundModelTemplate implements TemplateInterface
+class Tag
 {
-    /** @var BoundTemplateModelInterface */
-    private $model;
-    /** @var TemplateInterface */
-    private $template;
-
-    /** @var _InternalBoundModelTemplate */
-    public static $current;
+    /** @var string */
+    private $tag;
 
     /**
-     * _InternalBoundModelTemplate constructor.
-     * @param BoundTemplateModelInterface $model
+     * Tag constructor.
+     * @param string $tag
      */
-    public function __construct(BoundTemplateModelInterface $model, &$template)
+    public function __construct(string $tag)
     {
-        $this->model = $model;
-        $this->template = &$template;
+        $this->tag = $tag;
     }
 
 
-    // Not used
-    public function getID()
+    /**
+     * @return string
+     */
+    public function getTag(): string
     {
-        return "";
+        return $this->tag;
     }
 
-    public function getName(): string
+    public function __toString()
     {
-        return "";
-    }
-
-    public function getRenderable(): callable
-    {
-        return function(){};
+        return $this->getTag();
     }
 }

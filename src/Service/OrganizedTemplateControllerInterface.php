@@ -40,6 +40,31 @@ use Skyline\Render\Template\TemplateInterface;
 interface OrganizedTemplateControllerInterface
 {
     /**
+     * Finds all templates with given name
+     *
+     * @param string $name
+     * @return array
+     */
+    public function findTemplatesWithName(string $name): array;
+
+    /**
+     * Finds all templates in given catalog
+     *
+     * @param string $catalogName
+     * @return array
+     */
+    public function findTemplatesInCatalog(string $catalogName): array;
+
+    /**
+     * Finds all templates with given tags
+     *
+     * @param array $tags
+     * @param bool $all
+     * @return array
+     */
+    public function findTemplatesWithTags(array $tags, bool $all = false): array;
+
+    /**
      * Returns first template found with name
      *
      * @param string $name
