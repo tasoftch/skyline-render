@@ -42,6 +42,7 @@ use Skyline\Render\Model\ModelInterface;
 use Skyline\Render\Service\OrganizedTemplateControllerInterface;
 use Skyline\Render\Service\TemplateControllerInterface;
 use Skyline\Render\Template\AbstractTemplate;
+use Skyline\Render\Template\RenderableInterface;
 use Skyline\Render\Template\TemplateInterface;
 use TASoft\Service\ServiceForwarderTrait;
 use TASoft\Service\ServiceManager;
@@ -139,7 +140,7 @@ class DefaultRenderContext implements RenderContextInterface
         $render = AbstractRender::getCurrentRender();
         if(method_exists($render, 'renderTemplate')) {
             $tmp = NULL;
-            if($template instanceof TemplateInterface)
+            if($template instanceof TemplateInterface || $template instanceof RenderableInterface)
                 $tmp = $template;
             else {
                 /** @var TemplateControllerInterface $tc */
@@ -165,6 +166,11 @@ class DefaultRenderContext implements RenderContextInterface
                     else
                         $tmp = $tc->getTemplate($template);
                 }
+            }
+
+            if($tmp instanceof RenderableInterface) {
+                $tmp->renderContents($additionalInfo);
+                return;
             }
 
             if(!($tmp instanceof TemplateInterface)) {

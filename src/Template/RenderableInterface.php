@@ -34,13 +34,21 @@
 
 namespace Skyline\Render\Template;
 
+use Skyline\Render\Context\DefaultRenderContext;
 
+/**
+ * This is a lightweight render interface, meaning that an object implementing this interface can be rendered as template by the render context.
+ *
+ * @package Skyline\Render
+ * @see DefaultRenderContext::renderSubTemplate()
+ */
 interface RenderableInterface
 {
     /**
      * Renders and prints the template
      *
+     * @param mixed|null $additionalInfo
      * @return void
      */
-    public function renderContents();
+    public function renderContents($additionalInfo);
 }
