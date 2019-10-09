@@ -38,9 +38,11 @@ namespace Skyline\Render\Context;
 use Skyline\Render\AbstractRender;
 use Skyline\Render\Exception\TemplateNotFoundException;
 use Skyline\Render\Info\RenderInfoInterface;
+use Skyline\Render\Model\BoundTemplateModelInterface;
 use Skyline\Render\Model\ModelInterface;
 use Skyline\Render\Service\OrganizedTemplateControllerInterface;
 use Skyline\Render\Service\TemplateControllerInterface;
+use Skyline\Render\Template\_InternalBoundModelTemplate;
 use Skyline\Render\Template\AbstractTemplate;
 use Skyline\Render\Template\RenderableInterface;
 use Skyline\Render\Template\TemplateInterface;
@@ -133,13 +135,18 @@ class DefaultRenderContext implements RenderContextInterface
     /**
      * Renders a subtemplate
      *
-     * @param string|TemplateInterface|array $template
+     * @param string|TemplateInterface|BoundTemplateModelInterface|array $template
      * @param mixed $additionalInfo
      */
     public function renderSubTemplate($template, $additionalInfo = NULL) {
         $render = AbstractRender::getCurrentRender();
         if(method_exists($render, 'renderTemplate')) {
             $tmp = NULL;
+
+            if($template instanceof BoundTemplateModelInterface) {
+                $template = new _InternalBoundModelTemplate($template, $tmp);
+            }
+
             if($template instanceof TemplateInterface || $template instanceof RenderableInterface)
                 $tmp = $template;
             else {
