@@ -42,8 +42,14 @@ use Skyline\Render\Model\BoundTemplateModelInterface;
 use Skyline\Render\Model\ModelInterface;
 use Skyline\Render\Service\OrganizedTemplateControllerInterface;
 use Skyline\Render\Service\TemplateControllerInterface;
+use Skyline\Render\Specification\Container;
+use Skyline\Render\Specification\ID;
+use Skyline\Render\Specification\Name;
+use Skyline\Render\Specification\Tag;
 use Skyline\Render\Template\_InternalBoundModelTemplate;
 use Skyline\Render\Template\AbstractTemplate;
+use Skyline\Render\Template\AdvancedTemplateInterface;
+use Skyline\Render\Template\Catalog;
 use Skyline\Render\Template\RenderableInterface;
 use Skyline\Render\Template\TemplateInterface;
 use TASoft\Service\ServiceForwarderTrait;
@@ -130,6 +136,73 @@ class DefaultRenderContext implements RenderContextInterface
     public function setRenderInfo(RenderInfoInterface $renderInfo): void
     {
         $this->renderInfo = $renderInfo;
+    }
+
+    /**
+     * @param ID|Name|Catalog|Tag|Container ...$specifications
+     * @return TemplateInterface[]|RenderableInterface[]|null
+     */
+    public function findTemplate(...$specifications) {
+        $container = new Container(...$specifications);
+        /** @var TemplateControllerInterface $tc */
+        if($tc = $this->templateController) {
+            if($id = $container->getId())
+                return [$tc->getTemplate( (string)$id )];
+
+            if($tc instanceof OrganizedTemplateControllerInterface) {
+                $templates = NULL;
+
+                if($catalog = $container->getCatalog()) {
+                    $templates = $tc->findTemplatesInCatalog((string) $catalog);
+                }
+
+                if($tags = $container->getTags()) {
+                    $all = $container->isMatchingAllTags();
+                    $tags = array_map(function($a){return(string)$a;},$tags);
+
+                    if($templates) {
+                        $templates = array_filter($templates, function($tmp) use ($tags, $all) {
+                            if($tmp instanceof AdvancedTemplateInterface) {
+                                $myTags = $tmp->getTags();
+
+                                if($all) {
+                                    foreach($tags as $tag) {
+                                        if(!in_array($tag, $myTags))
+                                            return false;
+                                    }
+                                    return true;
+                                } else {
+                                    foreach($myTags as $tag) {
+                                        if(in_array($tag, $tags))
+                                            return true;
+                                    }
+                                }
+                            }
+                            return false;
+                        });
+                    } else {
+                        $templates = $tc->findTemplatesWithTags( $tags, $all );
+                    }
+                }
+
+                if($name = $container->getName()) {
+                    if($templates) {
+                        $templates = array_filter($templates, function($tmp) use ($name) {
+                            if($tmp instanceof TemplateInterface) {
+                                if($tmp->getName() == (string)$name)
+                                    return true;
+                            }
+                            return false;
+                        });
+                    } else {
+                        $templates = $tc->findTemplatesWithName((string)$name);
+                    }
+                }
+
+                return $templates;
+            }
+        }
+        return NULL;
     }
 
     /**
