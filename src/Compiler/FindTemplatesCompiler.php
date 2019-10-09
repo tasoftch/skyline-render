@@ -63,6 +63,13 @@ class FindTemplatesCompiler extends AbstractCompiler
         $scm = $context->getSourceCodeManager();
         $scm->setRespectPackageOrder(true);
 
+        $shiftIndex = function(&$array, $index) {
+            if(!is_array($array))
+                $array[] = $index;
+            else
+                array_unshift($array, $index);
+        };
+
         foreach($scm->yieldSourceFiles($this->getTemplateFilenamePattern(), $spt) as $sourceFile) {
             $loader = $this->getLoaderForFile($sourceFile);
             $template = $loader->loadTemplate();
@@ -75,15 +82,15 @@ class FindTemplatesCompiler extends AbstractCompiler
             if(!$name)
                 trigger_error("Template $sourceFile does not provide a name", E_USER_WARNING);
             else
-                $templates["names"][$name][] = $idx;
+                $shiftIndex($templates["names"][$name], $idx);
 
             if($catalog = $template->getCatalogName()) {
-                $templates["catalog"][$catalog][$name][] = $idx;
+                $shiftIndex($templates["catalog"][$catalog][$name], $idx);
             }
 
             if($tags = $template->getTags()) {
                 foreach($tags as $tag)
-                    $templates["tags"][$tag][] = $idx;
+                    $shiftIndex($templates["tags"][$tag], $idx);
             }
 
             $templates["data"][$idx] = $template->getSerializedTemplate();
