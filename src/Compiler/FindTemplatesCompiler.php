@@ -46,6 +46,7 @@ use Skyline\Render\Template\Loader\TemplateFileLoader;
 
 class FindTemplatesCompiler extends AbstractCompiler
 {
+    public $ignoreModuleTemplates = true;
     /**
      * @inheritDoc
      */
@@ -71,6 +72,9 @@ class FindTemplatesCompiler extends AbstractCompiler
         };
 
         foreach($scm->yieldSourceFiles($this->getTemplateFilenamePattern(), $spt) as $sourceFile) {
+            if($this->ignoreModuleTemplates && $scm->isFilePartOfModule($sourceFile))
+                continue;
+
             $loader = $this->getLoaderForFile($sourceFile);
             $template = $loader->loadTemplate();
             $template = $this->adjustLoadedTemplate($template, $sourceFile);
