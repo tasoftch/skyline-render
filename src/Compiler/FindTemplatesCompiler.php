@@ -141,7 +141,7 @@ class FindTemplatesCompiler extends AbstractCompiler
      *
      * @return string
      */
-    protected function getTemplateFilenamePattern(): string {
+    public function getTemplateFilenamePattern(): string {
         return "/\.temp\.php$/i";
     }
 }
