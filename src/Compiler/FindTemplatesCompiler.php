@@ -64,6 +64,25 @@ class FindTemplatesCompiler extends AbstractCompiler
         $scm = $context->getSourceCodeManager();
         $scm->setRespectPackageOrder(true);
 
+
+        foreach($scm->yieldSourceFiles($this->getTemplateFilenamePattern(), $spt) as $sourceFile) {
+            if($this->ignoreModuleTemplates && $scm->isFilePartOfModule($sourceFile))
+                continue;
+
+            $this->compileTemplate($sourceFile, $templates, $context);
+        }
+        $scm->setRespectPackageOrder(false);
+
+        $data = var_export($templates, true);
+        file_put_contents($fn, "<?php\nreturn $data;");
+    }
+
+    /**
+     * @param SourceFile $sourceFile
+     * @param $templates
+     * @param CompilerContext $context
+     */
+    public function compileTemplate($sourceFile, &$templates, CompilerContext $context) {
         $shiftIndex = function(&$array, $index) {
             if(!is_array($array))
                 $array[] = $index;
@@ -71,38 +90,29 @@ class FindTemplatesCompiler extends AbstractCompiler
                 array_unshift($array, $index);
         };
 
-        foreach($scm->yieldSourceFiles($this->getTemplateFilenamePattern(), $spt) as $sourceFile) {
-            if($this->ignoreModuleTemplates && $scm->isFilePartOfModule($sourceFile))
-                continue;
+        $loader = $this->getLoaderForFile($sourceFile);
+        $template = $loader->loadTemplate();
+        $template = $this->adjustLoadedTemplate($template, $sourceFile);
 
-            $loader = $this->getLoaderForFile($sourceFile);
-            $template = $loader->loadTemplate();
-            $template = $this->adjustLoadedTemplate($template, $sourceFile);
+        $templates["files"][] = $ref = $context->useZeroLinks() ? $sourceFile->getRealPath() : $sourceFile->getPathName();
+        $idx = array_search($ref, $templates["files"]);
 
-            $templates["files"][] = $ref = $context->useZeroLinks() ? $sourceFile->getRealPath() : $sourceFile->getPathName();
-            $idx = array_search($ref, $templates["files"]);
+        $name = $template->getName();
+        if(!$name)
+            trigger_error("Template $sourceFile does not provide a name", E_USER_WARNING);
+        else
+            $shiftIndex($templates["names"][$name], $idx);
 
-            $name = $template->getName();
-            if(!$name)
-                trigger_error("Template $sourceFile does not provide a name", E_USER_WARNING);
-            else
-                $shiftIndex($templates["names"][$name], $idx);
-
-            if($catalog = $template->getCatalogName()) {
-                $shiftIndex($templates["catalog"][$catalog][$name], $idx);
-            }
-
-            if($tags = $template->getTags()) {
-                foreach($tags as $tag)
-                    $shiftIndex($templates["tags"][$tag], $idx);
-            }
-
-            $templates["data"][$idx] = $template->getSerializedTemplate();
+        if($catalog = $template->getCatalogName()) {
+            $shiftIndex($templates["catalog"][$catalog][$name], $idx);
         }
-        $scm->setRespectPackageOrder(false);
 
-        $data = var_export($templates, true);
-        file_put_contents($fn, "<?php\nreturn $data;");
+        if($tags = $template->getTags()) {
+            foreach($tags as $tag)
+                $shiftIndex($templates["tags"][$tag], $idx);
+        }
+
+        $templates["data"][$idx] = $template->getSerializedTemplate();
     }
 
     /**
