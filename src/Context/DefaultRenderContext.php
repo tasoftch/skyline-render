@@ -266,6 +266,19 @@ class DefaultRenderContext implements RenderContextInterface
     }
 
     /**
+     * Checks, if a sub template with given name exists
+     *
+     * @param $template
+     * @return bool
+     */
+    public function hasSubTemplate($template) {
+        if($templates = $this->getRenderInfo()->get( RenderInfoInterface::INFO_SUB_TEMPLATES )) {
+            return isset($templates[$template]);
+        }
+        return false;
+    }
+
+    /**
      * Access to direct information on render info
      *
      * @return mixed|null
