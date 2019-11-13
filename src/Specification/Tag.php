@@ -35,7 +35,9 @@
 namespace Skyline\Render\Specification;
 
 
-class Tag
+use Serializable;
+
+class Tag implements Serializable
 {
     /** @var string */
     private $tag;
@@ -61,5 +63,30 @@ class Tag
     public function __toString()
     {
         return $this->getTag();
+    }
+
+    /**
+     * String representation of object
+     * @link https://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
+     * @since 5.1.0
+     */
+    public function serialize()
+    {
+        return serialize($this->tag);
+    }
+
+    /**
+     * Constructs the object
+     * @link https://php.net/manual/en/serializable.unserialize.php
+     * @param string $serialized <p>
+     * The string representation of the object.
+     * </p>
+     * @return void
+     * @since 5.1.0
+     */
+    public function unserialize($serialized)
+    {
+        $this->tag = unserialize($serialized);
     }
 }

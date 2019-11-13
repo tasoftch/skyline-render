@@ -35,7 +35,9 @@
 namespace Skyline\Render\Specification;
 
 
-class Catalog
+use Serializable;
+
+class Catalog implements Serializable
 {
     /** @var string */
     private $name;
@@ -60,5 +62,30 @@ class Catalog
     public function __toString()
     {
         return $this->getName();
+    }
+
+    /**
+     * String representation of object
+     * @link https://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
+     * @since 5.1.0
+     */
+    public function serialize()
+    {
+        return serialize($this->name);
+    }
+
+    /**
+     * Constructs the object
+     * @link https://php.net/manual/en/serializable.unserialize.php
+     * @param string $serialized <p>
+     * The string representation of the object.
+     * </p>
+     * @return void
+     * @since 5.1.0
+     */
+    public function unserialize($serialized)
+    {
+        $this->name = unserialize($serialized);
     }
 }

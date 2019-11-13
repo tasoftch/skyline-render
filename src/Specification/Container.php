@@ -35,10 +35,11 @@
 namespace Skyline\Render\Specification;
 
 
+use Serializable;
 use Skyline\Render\Template\RenderableInterface;
 use Skyline\Render\Template\TemplateInterface;
 
-class Container
+class Container implements Serializable
 {
     const SPEC_MATCHING_ALL_TAGS = -19928;
     const SPEC_MATCHING_ONE_TAG = -19919;
@@ -150,7 +151,7 @@ class Container
     /**
      * @param RenderableInterface[]|TemplateInterface[] $templates
      */
-    public function setTemplate($templates): void
+    public function setTemplates($templates): void
     {
         $this->templates = $templates;
     }
@@ -169,5 +170,42 @@ class Container
     public function isMatchingAllTags(): bool
     {
         return $this->matchingAllTags;
+    }
+
+    /**
+     * String representation of object
+     * @link https://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
+     * @since 5.1.0
+     */
+    public function serialize()
+    {
+        return serialize([
+            $this->id,
+            $this->catalog,
+            $this->name,
+            $this->tags,
+            $this->matchingAllTags
+        ]);
+    }
+
+    /**
+     * Constructs the object
+     * @link https://php.net/manual/en/serializable.unserialize.php
+     * @param string $serialized <p>
+     * The string representation of the object.
+     * </p>
+     * @return void
+     * @since 5.1.0
+     */
+    public function unserialize($serialized)
+    {
+        list(
+            $this->id,
+            $this->catalog,
+            $this->name,
+            $this->tags,
+            $this->matchingAllTags
+            ) = unserialize($serialized);
     }
 }
