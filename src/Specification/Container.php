@@ -73,11 +73,7 @@ class Container implements Serializable
      */
     public function append(...$_) {
         foreach($_ as $item) {
-            if($item == self::SPEC_MATCHING_ALL_TAGS)
-                $this->matchingAllTags = true;
-            elseif($item == self::SPEC_MATCHING_ONE_TAG)
-                $this->matchingAllTags = false;
-            elseif($item instanceof Catalog)
+            if($item instanceof Catalog)
                 $this->catalog = $item;
             elseif($item instanceof Name)
                 $this->name = $item;
@@ -87,6 +83,10 @@ class Container implements Serializable
                 if(!in_array($item, $this->tags))
                     $this->tags[] = $item;
             }
+            elseif(is_int($item) && $item == self::SPEC_MATCHING_ALL_TAGS)
+                $this->matchingAllTags = true;
+            elseif(is_int($item) && $item == self::SPEC_MATCHING_ONE_TAG)
+                $this->matchingAllTags = false;
             elseif($item instanceof TemplateInterface || $item instanceof RenderableInterface)
                 $this->templates[] = $item;
             elseif($item instanceof Container) {
@@ -101,7 +101,7 @@ class Container implements Serializable
                     if(!in_array($template, $this->templates))
                         $this->addTemplate($template);
                 }
-                $this->matchingAllTags = $this->isMatchingAllTags();
+                $this->matchingAllTags = $item->isMatchingAllTags();
             }
             else
                 trigger_error("Item $item is not supported", E_USER_WARNING);
