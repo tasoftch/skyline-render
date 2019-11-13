@@ -111,7 +111,7 @@ class Container implements Serializable
     /**
      * @return Catalog|null
      */
-    public function getCatalog(): Catalog
+    public function getCatalog(): ?Catalog
     {
         return $this->catalog;
     }
