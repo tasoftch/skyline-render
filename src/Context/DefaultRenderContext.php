@@ -255,7 +255,7 @@ class DefaultRenderContext implements RenderContextInterface
             }
 
             if(!($tmp instanceof TemplateInterface)) {
-                $e = new TemplateNotFoundException("Requested sub template not found");
+                $e = new TemplateNotFoundException(is_string($template) ? "Requested sub template $template not found" : "Requested sub template not found");
                 $e->setTemplateID((string) $tmp);
                 throw $e;
             }
