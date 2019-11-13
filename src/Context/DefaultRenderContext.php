@@ -227,6 +227,9 @@ class DefaultRenderContext implements RenderContextInterface
                 /** @var TemplateControllerInterface $tc */
                 $tc = $this->templateController;
 
+                if(is_callable( $template ))
+                    $template = call_user_func($template);
+
                 if(is_string($template)) {
 
                     if($templates = $this->getRenderInfo()->get( RenderInfoInterface::INFO_SUB_TEMPLATES )) {
