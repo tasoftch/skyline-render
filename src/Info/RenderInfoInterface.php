@@ -45,6 +45,11 @@ interface RenderInfoInterface
 
     const INFO_ADDITIONAL_INFO = 'additionalInfo';
 
+    const INFO_TITLE = 'title';
+    const INFO_DESCRIPTION = 'description';
+    const INFO_DYNAMIC_META = 'metas';
+    const INFO_DYNAMIC_LINKS = 'links';
+
     /**
      * Returns a value for the required information
      *
