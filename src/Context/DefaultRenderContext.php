@@ -35,6 +35,7 @@
 namespace Skyline\Render\Context;
 
 
+use Skyline\Kernel\Service\CORSService;
 use Skyline\Render\AbstractRender;
 use Skyline\Render\Exception\TemplateNotFoundException;
 use Skyline\Render\Info\RenderInfoInterface;
@@ -120,6 +121,49 @@ class DefaultRenderContext implements RenderContextInterface
         }
 
         return $default;
+    }
+
+    /**
+     * Use this method in templates to refer to action controllers.
+     * Normally an action controller holds a class constant for each reachable action.
+     *
+     * @param string $host                 The host, may be directly a host or a labelled registered host from compilation
+     * @param string $URI                  The URI to append
+     * @param mixed ...$arguments          Arguments to apply to the URL. List strings to apply into $0-9 markers, and an array to build query from
+     * @return string
+     */
+    public function buildURL($host, $URI = '/', ...$arguments) {
+        $theArgs = [];
+        $q = [];
+
+        foreach($arguments as $arg) {
+            if(is_array($arg))
+                $q = $arg;
+            else
+                $theArgs[] = $arg;
+        }
+
+        $host = CORSService::getHostByLabel($host, $host);
+        if($q) {
+            $q = "?" . http_build_query($q);
+        } else
+            $q = '';
+
+        $URI = preg_replace_callback('/\$(\d+)/i', function($ms) use ($theArgs) {
+            $idx = $ms[1];
+            return $theArgs[$idx] ?? "";
+        }, "$URI$q");
+
+        CORSService::getHostOfRequest($this->request, $myHost);
+
+        if($host != $myHost) {
+            if(stripos($host, 'http') !== 0) {
+                $host = (($_SERVER["HTTPS"] ?? false) ? 'https://' : 'http://') . $host;
+            }
+            return "$host$URI";
+        }
+
+        return $URI;
     }
 
     /**
