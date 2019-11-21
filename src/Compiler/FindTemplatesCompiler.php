@@ -94,8 +94,9 @@ class FindTemplatesCompiler extends AbstractCompiler
         $template = $loader->loadTemplate();
         $template = $this->adjustLoadedTemplate($template, $sourceFile);
 
-        $templates["files"][] = $ref = $context->getRelativeProjectPath( realpath( $sourceFile ) );
-        $idx = array_search($ref, $templates["files"]);
+        static $idx = 0;
+
+        $templates["files"][++$idx] = $ref = $context->getRelativeProjectPath( realpath( $sourceFile ) );
 
         $name = $template->getName();
         if(!$name)
