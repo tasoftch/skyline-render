@@ -50,7 +50,7 @@ use Skyline\Render\Specification\Tag;
 use Skyline\Render\Template\_InternalBoundModelTemplate;
 use Skyline\Render\Template\AbstractTemplate;
 use Skyline\Render\Template\AdvancedTemplateInterface;
-use Skyline\Render\Template\Catalog;
+use Skyline\Render\Specification\Catalog;
 use Skyline\Render\Template\RenderableInterface;
 use Skyline\Render\Template\TemplateInterface;
 use TASoft\Service\ServiceForwarderTrait;

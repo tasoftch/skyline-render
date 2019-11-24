@@ -34,8 +34,6 @@
 
 namespace Skyline\Render\Service;
 
-
-use Skyline\Render\Template\Catalog;
 use Skyline\Render\Template\TemplateInterface;
 
 interface TemplateControllerInterface
