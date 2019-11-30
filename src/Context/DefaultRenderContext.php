@@ -129,10 +129,11 @@ class DefaultRenderContext implements RenderContextInterface
      *
      * @param string $host                 The host, may be directly a host or a labelled registered host from compilation
      * @param string $URI                  The URI to append
+     * @param bool $forceHost              If set, puts always http://host as prefix
      * @param mixed ...$arguments          Arguments to apply to the URL. List strings to apply into $0-9 markers, and an array to build query from
      * @return string
      */
-    public function buildURL($host, $URI = '/', ...$arguments) {
+    public function buildURL($host, $URI = '/', bool $forceHost = false,  ...$arguments) {
         $theArgs = [];
         $q = [];
 
@@ -156,7 +157,7 @@ class DefaultRenderContext implements RenderContextInterface
 
         CORSService::getHostOfRequest($this->request, $myHost);
 
-        if($host != $myHost) {
+        if($forceHost || $host != $myHost) {
             if(stripos($host, 'http') !== 0) {
                 $host = (($_SERVER["HTTPS"] ?? false) ? 'https://' : 'http://') . $host;
             }
