@@ -60,7 +60,24 @@ class DefaultRenderContext implements RenderContextInterface
 {
     use ServiceForwarderTrait;
 
-    /** @var RenderInfoInterface */
+    /** @var int Encodes an ascii string into an utf-8 */
+    const ENCODE_UTF8_STRING_MODE = 1;
+    /** @var int encodes an utf-8 string into an ascii */
+	const ENCODE_ASCII_STRING_MODE = 2;
+	/** @var int Encodes a string into base64 data string */
+	const ENCODE_BASE64_STRING_MODE = 3;
+	/** @var int Encodes a string into base64 data string wrapped into script tag decoding it */
+	const ENCODE_BASE64_JS_STRING_MODE = 4;
+
+	/** @var int Encodes a string to not have HTML specific characters anymore */
+	const ENCODE_HTML_STRING_MODE = 0;
+	/** @var int Encodes a string into a valid URL string */
+	const ENCODE_URL_STRING_MODE = 5;
+
+
+
+
+	/** @var RenderInfoInterface */
     private $renderInfo;
 
     /**
@@ -166,6 +183,29 @@ class DefaultRenderContext implements RenderContextInterface
 
         return $URI;
     }
+
+	/**
+	 * This method can be used to transform any string into a secure version specified by the mode argument.
+	 *
+	 * @param string $html
+	 * @param int $mode
+	 */
+    public function encodeString($string, int $mode = self::ENCODE_HTML_STRING_MODE) {
+    	$code = "";
+    	switch ($mode) {
+			case self::ENCODE_HTML_STRING_MODE: return htmlspecialchars($string);
+			case self::ENCODE_BASE64_STRING_MODE: return base64_encode($string);
+			case self::ENCODE_ASCII_STRING_MODE: return utf8_decode($string);
+			case self::ENCODE_UTF8_STRING_MODE: return utf8_encode($string);
+			case self::ENCODE_URL_STRING_MODE: return urlencode($string);
+			case self::ENCODE_BASE64_JS_STRING_MODE: return "<script type='application/javascript'>document.write(atob('" . base64_encode($string) . "'));</script>";
+
+			default:
+				$code = $string;
+		}
+
+		return $code;
+	}
 
     /**
      * @return RenderInfoInterface
