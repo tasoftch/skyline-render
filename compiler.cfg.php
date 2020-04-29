@@ -36,6 +36,7 @@ use Skyline\Compiler\Factory\AbstractExtendedCompilerFactory;
 use Skyline\Compiler\Predef\ConfigurationCompiler;
 use Skyline\Compiler\Predef\OrderedConfigurationCompiler;
 use Skyline\Render\Compiler\ClearCompiledTemplate;
+use Skyline\Render\Compiler\ContextAnnotationCompiler;
 use Skyline\Render\Compiler\FindTemplatesCompiler;
 
 return [
@@ -57,5 +58,16 @@ return [
     ],
     "clear-templates" => [
         AbstractExtendedCompilerFactory::COMPILER_CLASS_KEY => ClearCompiledTemplate::class
-    ]
+    ],
+	'read-annotation-methods' => [
+		AbstractExtendedCompilerFactory::COMPILER_CLASS_KEY => ContextAnnotationCompiler::class,
+		AbstractExtendedCompilerFactory::COMPILER_ARGUMENTS_KEY => [
+			'contextFie' => 'context.config.php',
+			'excludeMagicMethods' => true
+		],
+		AbstractExtendedCompilerFactory::COMPILER_DEPENDENCIES_KEY => [
+			'expose-symbols',
+			"routing-config"
+		]
+	]
 ];

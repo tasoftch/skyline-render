@@ -48,6 +48,9 @@ return [
         ],
         "renderContext" => [
             AbstractFileConfiguration::SERVICE_CLASS => DefaultRenderContext::class,
+			AbstractFileConfiguration::SERVICE_INIT_ARGUMENTS => [
+				'contextFile' => '$(C)/context.config.php'
+			]
         ],
         "templateController" => [
             AbstractFileConfiguration::SERVICE_CLASS => CompiledTemplateController::class,

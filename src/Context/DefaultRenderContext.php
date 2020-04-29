@@ -35,6 +35,7 @@
 namespace Skyline\Render\Context;
 
 
+use Error;
 use Skyline\Kernel\Service\CORSService;
 use Skyline\Render\AbstractRender;
 use Skyline\Render\Exception\TemplateNotFoundException;
@@ -74,13 +75,25 @@ class DefaultRenderContext implements RenderContextInterface
 	/** @var int Encodes a string into a valid URL string */
 	const ENCODE_URL_STRING_MODE = 5;
 
+	private $contextFile;
+	private $contextFileCache;
+
 
 
 
 	/** @var RenderInfoInterface */
     private $renderInfo;
 
-    /**
+	/**
+	 * DefaultRenderContext constructor.
+	 * @param $contextFile
+	 */
+	public function __construct($contextFile = NULL)
+	{
+		$this->contextFile = $contextFile;
+	}
+
+	/**
      * The current version of Skyline CMS
      * @return string
      */
@@ -191,7 +204,6 @@ class DefaultRenderContext implements RenderContextInterface
 	 * @param int $mode
 	 */
     public function encodeString($string, int $mode = self::ENCODE_HTML_STRING_MODE) {
-    	$code = "";
     	switch ($mode) {
 			case self::ENCODE_HTML_STRING_MODE: return htmlspecialchars($string);
 			case self::ENCODE_BASE64_STRING_MODE: return base64_encode($string);
@@ -201,10 +213,8 @@ class DefaultRenderContext implements RenderContextInterface
 			case self::ENCODE_BASE64_JS_STRING_MODE: return "<script type='application/javascript'>document.write(atob('" . base64_encode($string) . "'));</script>";
 
 			default:
-				$code = $string;
+				return $string;
 		}
-
-		return $code;
 	}
 
     /**
@@ -374,4 +384,32 @@ class DefaultRenderContext implements RenderContextInterface
     public function getAdditionalInfo() {
         return $this->getRenderInfo()->get( RenderInfoInterface::INFO_ADDITIONAL_INFO );
     }
+
+	/**
+	 * Context forwarding if enabled
+	 *
+	 * @param $name
+	 * @param $arguments
+	 */
+	public function __call($name, $arguments)
+	{
+		if(NULL === $this->contextFileCache && is_file($this->contextFile)) {
+			$this->contextFileCache = require $this->contextFile;
+		}
+
+		if($info = $this->contextFileCache[$name] ?? NULL) {
+			$className = $info['class'];
+			if(is_callable("$className::getServiceName"))
+				$serviceName = call_user_func("$className::getServiceName");
+			else {
+				trigger_error("There might be a configuration error because the service {$info['service']} seems not to be a correct instance", E_USER_WARNING);
+				$serviceName = $info["service"];
+			}
+			$service = $this->get( $serviceName );
+			if(!$service)
+				throw new Error("Service $serviceName not found");
+			return call_user_func_array([$service, $name], $arguments);
+		} else
+			throw new Error("Call to undefined method " . __CLASS__ . "::$name()");
+	}
 }
