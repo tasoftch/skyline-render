@@ -40,6 +40,8 @@ use Skyline\Render\RenderInterface;
 
 class CompiledRenderController implements RenderControllerInterface
 {
+	const DEFAULT_RENDER_NAME = CompiledRender::ATOMIC_TEMPLATE_RENDER;
+
     private $compiledRenderFilename;
     private $compiledRenderInfo;
 
@@ -67,6 +69,9 @@ class CompiledRenderController implements RenderControllerInterface
         if(NULL === $this->compiledRenderInfo) {
             $this->compiledRenderInfo = require getcwd() . DIRECTORY_SEPARATOR . $this->getCompiledRenderFilename();
         }
+
+        if(!$name)
+        	$name = static::DEFAULT_RENDER_NAME;
 
         if($renderInfo = $this->compiledRenderInfo[ $name ] ?? NULL) {
             if($renderInfo instanceof RenderInterface)
