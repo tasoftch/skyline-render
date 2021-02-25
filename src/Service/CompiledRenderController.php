@@ -67,7 +67,7 @@ class CompiledRenderController implements RenderControllerInterface
      */
     public function getRender(string $name): RenderInterface {
         if(NULL === $this->compiledRenderInfo) {
-            $this->compiledRenderInfo = require getcwd() . DIRECTORY_SEPARATOR . $this->getCompiledRenderFilename();
+            $this->compiledRenderInfo = require $this->getCompiledRenderFilename();
         }
 
         if(!$name)
