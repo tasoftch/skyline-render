@@ -117,14 +117,18 @@ class RenderTemplateDefaultDispatchPlugin extends RenderTemplateDispatchPlugin
             }
         } elseif($eventName == static::EVENT_BODY_RENDER) {
             // Render the template right now in body phase
-            $this->renderBeforeBody($eventManager, $beforeBody, $renderInfo);
-            $eventManager->renderTemplate($template, $event->getInfo());
-            $this->renderAfterBody($eventManager, $afterBody, $renderInfo);
+           $this->invokeMainBodyRender($eventManager, $beforeBody, $afterBody, $renderInfo, $event, $template);
         } elseif($eventName == static::EVENT_FOOTER_RENDER) {
             $this->renderFooter($eventManager, $footer, $renderInfo);
         } else
             parent::__invoke($eventName, $event, $eventManager, $arguments);
     }
+
+    protected function invokeMainBodyRender($eventManager, $before, $after, $renderInfo, $event, $template) {
+		$this->renderBeforeBody($eventManager, $before, $renderInfo);
+		$eventManager->renderTemplate($template, $event->getInfo());
+		$this->renderAfterBody($eventManager, $after, $renderInfo);
+	}
 
     /**
      * This method is called for templates that know about their extensions.
