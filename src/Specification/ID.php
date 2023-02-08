@@ -88,4 +88,14 @@ class ID implements Serializable
     {
         $this->id = unserialize($serialized);
     }
+
+	public function __serialize(): array
+	{
+		return [$this->id];
+	}
+
+	public function __unserialize(array $data): void
+	{
+		list($this->id) = $data;
+	}
 }

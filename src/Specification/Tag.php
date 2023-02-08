@@ -89,4 +89,14 @@ class Tag implements Serializable
     {
         $this->tag = unserialize($serialized);
     }
+
+	public function __serialize(): array
+	{
+		return [$this->tag];
+	}
+
+	public function __unserialize(array $data): void
+	{
+		list($this->tag) = $data;
+	}
 }

@@ -180,13 +180,7 @@ class Container implements Serializable
      */
     public function serialize()
     {
-        return serialize([
-            $this->id,
-            $this->catalog,
-            $this->name,
-            $this->tags,
-            $this->matchingAllTags
-        ]);
+        return serialize( $this->__serialize() );
     }
 
     /**
@@ -200,12 +194,28 @@ class Container implements Serializable
      */
     public function unserialize($serialized)
     {
-        list(
-            $this->id,
-            $this->catalog,
-            $this->name,
-            $this->tags,
-            $this->matchingAllTags
-            ) = unserialize($serialized);
+        $this->__unserialize( unserialize($serialized) );
     }
+
+	public function __serialize(): array
+	{
+		return [
+			$this->id,
+			$this->catalog,
+			$this->name,
+			$this->tags,
+			$this->matchingAllTags
+		];
+	}
+
+	public function __unserialize(array $data): void
+	{
+		list(
+			$this->id,
+			$this->catalog,
+			$this->name,
+			$this->tags,
+			$this->matchingAllTags
+			) = $data;
+	}
 }

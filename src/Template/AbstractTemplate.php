@@ -96,12 +96,22 @@ abstract class AbstractTemplate implements AdvancedTemplateInterface, Serializab
 
     public function unserialize($serialized)
     {
-        list(
-            $this->name,
-            $this->catalogName,
-            $this->tags,
-            $this->id,
-            $this->attributes
-            ) = unserialize($serialized);
+        $this->__unserialize(unserialize($serialized));
     }
+
+	public function __serialize(): array
+	{
+		return [];
+	}
+
+	public function __unserialize(array $data): void
+	{
+		list(
+			$this->name,
+			$this->catalogName,
+			$this->tags,
+			$this->id,
+			$this->attributes
+			) = $data;
+	}
 }

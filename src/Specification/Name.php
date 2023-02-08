@@ -89,4 +89,14 @@ class Name implements Serializable
     {
         $this->name = unserialize($serialized);
     }
+
+	public function __serialize(): array
+	{
+		return [$this->name];
+	}
+
+	public function __unserialize(array $data): void
+	{
+		list($this->name) = $data;
+	}
 }
