@@ -49,8 +49,11 @@ abstract class AbstractModel implements ModelInterface, ArrayAccess, Iterator, C
 
     public function &__get($name)
     {
-        $d = &$this->data[$name] ?? NULL;
-        return $d;
+		$a = NULL;
+		if(isset($this->data[$name])) {
+			$a = &$this->data[$name];
+		}
+		return $a;
     }
 
     public function __set($name, $value) {
@@ -66,48 +69,48 @@ abstract class AbstractModel implements ModelInterface, ArrayAccess, Iterator, C
     }
 
 
-    public function count()
+    public function count(): int
     {
         return count($this->data);
     }
 
-    public function current()
+    public function current(): mixed
     {
         return current($this->data);
     }
 
-    public function key()
-    {
+    public function key(): string|int|null
+	{
         return key($this->data);
     }
 
-    public function next()
+    public function next(): void
     {
         next($this->data);
     }
 
-    public function rewind()
+    public function rewind(): void
     {
         reset($this->data);
     }
-    public function valid()
+    public function valid(): bool
     {
         return ($this->key() !== null);
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return $this->__isset($offset);
     }
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return $this->__get($offset);
     }
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
         $this->__set($offset, $value);
     }
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
         unset($this->data[$offset]);
     }

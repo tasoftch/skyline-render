@@ -31,18 +31,18 @@ class NullModel implements ModelInterface
         return NULL;
     }
 
-    public function offsetExists($offset)
+    public function offsetExists($offset): bool
     {
         return false;
     }
-    public function offsetGet($offset)
+    public function offsetGet($offset): mixed
     {
         return NULL;
     }
-    public function offsetSet($offset, $value)
+    public function offsetSet($offset, $value): void
     {
     }
-    public function offsetUnset($offset)
+    public function offsetUnset($offset): void
     {
     }
 }

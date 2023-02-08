@@ -49,7 +49,7 @@ interface ExtractableModelInterface extends ModelInterface
 
     /**
      * If a key can not be transformed into a valid variable name, this method must resolve the issue.
-     * Otherwise the variable won't be available in scope.
+     * Otherwise, the variable won't be available in scope.
      *
      * @param string $anInvalidKey
      * @return string
