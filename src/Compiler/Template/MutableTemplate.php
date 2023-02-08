@@ -183,16 +183,21 @@ class MutableTemplate implements TemplateInterface, Serializable
 
     public function serialize()
     {
-        return serialize([
-            $this->name,
-            $this->catalogName,
-            $this->tags,
-            $this->id,
-            $this->attributes
-        ]);
+        return serialize($this->__serialize());
     }
 
-    public function getSerializedTemplate(): string {
+	public function __serialize(): array
+	{
+		return [
+			$this->name,
+			$this->catalogName,
+			$this->tags,
+			$this->id,
+			$this->attributes
+		];
+	}
+
+	public function getSerializedTemplate(): string {
         $content = serialize($this);
         $classLen = strlen($this->className);
         return preg_replace("/^C:\d+:\"[^\"]+\"/i", "C:$classLen:\"$this->className\"", $content);
@@ -217,7 +222,12 @@ class MutableTemplate implements TemplateInterface, Serializable
         // Can not unserialize!
     }
 
-    /**
+	public function __unserialize(array $data): void
+	{
+		// Can not unserialize!
+	}
+
+	/**
      * @return string
      */
     public function getClassName(): string
