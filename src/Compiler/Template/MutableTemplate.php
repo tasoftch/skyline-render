@@ -200,7 +200,7 @@ class MutableTemplate implements TemplateInterface, Serializable
 	public function getSerializedTemplate(): string {
         $content = serialize($this);
         $classLen = strlen($this->className);
-        return preg_replace("/^C:\d+:\"[^\"]+\"/i", "C:$classLen:\"$this->className\"", $content);
+        return preg_replace("/^O:\d+:\"[^\"]+\"/i", "O:$classLen:\"$this->className\"", $content);
     }
 
     /**
